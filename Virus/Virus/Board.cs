@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Virus
@@ -28,6 +29,48 @@ namespace Virus
             playerTurn = 1;
             currentPlayer = player1;
         }
+        /// <summary>
+        /// Returns the number of points for all players starting with player 1 (0 indexed)
+        /// </summary>
+        /// <returns></returns>
+        internal sbyte[] GetScore()
+        {
+            sbyte[] result = new sbyte[2];
+            for (int x = 0; x < boardSize; x++)
+            {
+                for (int y = 0; y < boardSize; y++)
+                {
+                    if (board[x, y] == 1)
+                    {
+                        result[0] += 1;
+                    }
+                    if (board[x, y] == 2)
+                    {
+                        result[1] += 1;
+                    }
+                }
+            }
+            return result;
+        }
+
+        internal void reset()
+        {
+            board = new sbyte[boardSize, boardSize];
+            board[0, 0] = 1;
+            board[boardSize - 1, boardSize - 1] = 1;
+            board[boardSize - 1, 0] = 2;
+            board[0, boardSize - 1] = 2;
+            playerTurn = 1;
+            currentPlayer = player1;
+        }
+
+        public bool IsDone()
+        {
+            if (GetBricks().Count == boardSize * boardSize)
+                return true;
+            return false;
+        }
+
         public void SetPlayer1(VirusPlayer player)
         {
             player1 = player;
@@ -38,6 +81,7 @@ namespace Virus
         }
         public void Display()
         {
+            Console.Clear();
             for (int a = 0; a < boardSize; a++)
             {
                 for (int i = 0; i < boardSize; i++)
@@ -57,8 +101,22 @@ namespace Virus
         /// <returns></returns>
         public virtual sbyte MoveBrick(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
-            sbyte move = Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY); ;
+            sbyte move = Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
             if (move != -1)
+            {
+                if (playerTurn == 1)
+                {
+                    playerTurn = 2;
+                    currentPlayer = player2;
+                }
+                else if (playerTurn == 2)
+                {
+                    playerTurn = 1;
+                    currentPlayer = player1;
+                }
+                return move;
+            }
+            if (CantMove())
             {
                 if (playerTurn == 1)
                 {
@@ -72,6 +130,45 @@ namespace Virus
                 }
             }
             return move;
+        }
+
+        private bool CantMove()
+        {
+            List<Tuple<sbyte, sbyte, sbyte, sbyte>> moves = new List<Tuple<sbyte, sbyte, sbyte, sbyte>>();
+            foreach (var item in GetBricks(playerTurn))
+            {
+
+                for (int x = -1; x <= 1; x++)
+                {
+                    for (int y = -1; y <= 1; y++)
+                    {
+                        sbyte x2 = -1;
+                        sbyte y2 = -1;
+                        if (x > item.Item2)
+                            x2 = (sbyte)(x - item.Item2);
+                        else
+                            x2 = (sbyte)(item.Item2 - x);
+                        if (y > item.Item3)
+                            y2 = (sbyte)(y - item.Item3);
+                        else
+                            y2 = (sbyte)(item.Item3 - y);
+
+                        sbyte result = TryMakeMove(playerTurn, item.Item2, item.Item3, x2, y2);
+                        if (result != -1)
+                        {
+                            if (!moves.Contains(new Tuple<sbyte, sbyte, sbyte, sbyte>(item.Item2, item.Item3, x2, y2)))
+                            {
+                                moves.Add(new Tuple<sbyte, sbyte, sbyte, sbyte>(item.Item2, item.Item3, x2, y2));
+                            }
+                        }
+                    }
+                }
+            }
+            if (moves.Count > 0)
+            {
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -155,8 +252,57 @@ namespace Virus
             //Jump move
             if (jumping)
             {
-                //TODO if it "touches" other players they become you...
-                taken++;
+                for (int i = -1; i <= 1; i++)
+                {
+                    try
+                    {
+                        if (i == -1)
+                        {
+                            if (board[moveToHereX - i, moveToHereY - 3] != 0 && board[moveToHereX - i, moveToHereY - 3] != player)
+                            {
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                            {
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY + 3] != 0 && board[moveToHereX - i, moveToHereY + 3] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        if (i == 0)
+                        {
+                            if (board[moveToHereX, moveToHereY - 3] != 0 && board[moveToHereX, moveToHereY - 3] != player)
+                            {
+                                taken++;
+                            }
+                            if (board[moveToHereX, moveToHereY + 3] != 0 && board[moveToHereX, moveToHereY + 3] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        if (i == 1)
+                        {
+                            if (board[moveToHereX - i, moveToHereY - 3] != 0 && board[moveToHereX - i, moveToHereY - 3] != player)
+                            {
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                            {
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY + 3] != 0 && board[moveToHereX - i, moveToHereY + 3] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
                 return taken;
             }
             else

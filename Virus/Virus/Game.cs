@@ -22,11 +22,26 @@ namespace Virus
             RandomComputer player2 = new RandomComputer(ref board, 2);
             board.SetPlayer1(player1);
             board.SetPlayer2(player2);
-            while (true)
+            int[] result = new int[2];
+            for (int i = 0; i < 10; i++)
             {
-                player1.play();
-                player2.play();
-                board.Display();
+                while (!board.IsDone())
+                {
+                    player1.play();
+                    player2.play();
+                    board.Display();
+                }
+                sbyte[] result2 = board.GetScore();
+                for (int a = 0; a < result2.Count(); a++)
+                {
+                    result[a] += result2[a];
+                }
+                board.reset();
+            }
+            
+            for (int i = 0; i < result.Count(); i++)
+            {
+                Console.WriteLine("Player " + i + " points: " + result[i]);
             }
         }
     }
