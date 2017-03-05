@@ -155,6 +155,7 @@ namespace Virus
             //Jump move
             if (jumping)
             {
+                //TODO if it "touches" other players they become you...
                 taken++;
                 return taken;
             }
