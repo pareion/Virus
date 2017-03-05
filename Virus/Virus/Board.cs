@@ -11,6 +11,7 @@ namespace Virus
         protected sbyte[,] board;
         protected int boardSize;
         protected sbyte playerTurn;
+        private bool jumping = false;
         public Board(int size)
         {
             board = new sbyte[size, size];
@@ -52,18 +53,26 @@ namespace Virus
                     playerTurn = 2;
                 else if (playerTurn == 2)
                     playerTurn = 1;
-                return Move(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+                return Move(playerNumber, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
             }
             else
                 return -1;
         }
 
-        protected sbyte Move(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        protected sbyte Move(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
-            if (!IsOccupied(moveToHereX, moveToHereY))
-                if (IsMoveEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
-                    return MakeMove(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+            if (IsAPiece(playerNumber, brickToMoveX, brickToMoveY))
+                if (!IsOccupied(moveToHereX, moveToHereY))
+                    if (IsMoveEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
+                        return MakeMove(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
             return -1;
+        }
+
+        private bool IsAPiece(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY)
+        {
+            if (board[brickToMoveX, brickToMoveY] == playerNumber)
+                return true;
+            return false;
         }
 
         private sbyte MakeMove(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
@@ -73,43 +82,76 @@ namespace Virus
             sbyte taken = 1;
 
             //Jump move
-            if (brickToMoveX - moveToHereX < 1 && brickToMoveY - moveToHereY > -1 && brickToMoveX - moveToHereX > -1 && brickToMoveY - moveToHereY < 1)
+            if (jumping)
             {
                 board[brickToMoveX, brickToMoveY] = 0;
                 return taken;
             }
-            //Normal move
-            for (int i = -1; i <= 1; i++)
+            else
             {
-                //Can improve so it doesn't check the 3 squares if you are placing a brick on the boundary
-                try
+                //Normal move
+                for (int i = -1; i <= 1; i++)
                 {
-                    if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                    //Can improve so it doesn't check the 3 squares if you are placing a brick on the boundary
+                    try
                     {
-                        board[moveToHereX - i, moveToHereY] = player;
-                        taken++;
+                        if (i == -1)
+                        {
+                            if (board[moveToHereX - i,moveToHereY - 1] != 0 && board[moveToHereX - i, moveToHereY - 1] != player)
+                            {
+                                board[moveToHereX - i, moveToHereY - 1] = player;
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                            {
+                                board[moveToHereX - i, moveToHereY] = player;
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY + 1] != 0 && board[moveToHereX - i, moveToHereY + 1] != player)
+                            {
+                                board[moveToHereX - i, moveToHereY + 1] = player;
+                                taken++;
+                            }
+                        }
+                        if (i == 0)
+                        {
+                            if (board[moveToHereX, moveToHereY - 1] != 0 && board[moveToHereX, moveToHereY - 1] != player)
+                            {
+                                board[moveToHereX, moveToHereY - 1] = player;
+                                taken++;
+                            }
+                            if (board[moveToHereX, moveToHereY + 1] != 0 && board[moveToHereX, moveToHereY + 1] != player)
+                            {
+                                board[moveToHereX, moveToHereY + 1] = player;
+                                taken++;
+                            }
+                        }
+                        if (i == 1)
+                        {
+                            if (board[moveToHereX - i, moveToHereY - 1] != 0 && board[moveToHereX - i, moveToHereY - 1] != player)
+                            {
+                                board[moveToHereX - i, moveToHereY - 1] = player;
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                            {
+                                board[moveToHereX - i, moveToHereY] = player;
+                                taken++;
+                            }
+                            if (board[moveToHereX - i, moveToHereY + 1] != 0 && board[moveToHereX - i, moveToHereY + 1] != player)
+                            {
+                                board[moveToHereX - i, moveToHereY + 1] = player;
+                                taken++;
+                            }
+                        }
                     }
-                    if (board[moveToHereX, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                    catch (Exception)
                     {
-                        board[moveToHereX, moveToHereY] = player;
-                        taken++;
-                    }
-                    if (board[moveToHereX - i, moveToHereY - i] != 0 && board[moveToHereX - i, moveToHereY] != player)
-                    {
-                        board[moveToHereX - i, moveToHereY - i] = player;
-                        taken++;
-                    }
-                    if (board[moveToHereX, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
-                    {
-                        board[moveToHereX, moveToHereY] = player;
-                        taken++;
-                    }
-                }
-                catch (Exception)
-                {
 
+                    }
                 }
             }
+
             return taken;
         }
 
@@ -118,9 +160,15 @@ namespace Virus
             if (brickToMoveX - moveToHereX < 3 && brickToMoveX - moveToHereX > -3 && brickToMoveY - moveToHereY < 3 && brickToMoveY - moveToHereY > -3)
             {
                 if (IsJumpEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
-                    return true;
+                {
+                    jumping = true;
+                    return jumping;
+                }
                 else if (IsNormalMoveEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
+                {
+                    jumping = false;
                     return true;
+                }
             }
             return false;
         }
@@ -140,12 +188,14 @@ namespace Virus
 
         private bool IsJumpEligable(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
-            if (brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY != 1 || brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY != -1)
-                if (brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY != 1 || brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY != -1)
-                    if (brickToMoveY - moveToHereY == 2 && brickToMoveX - moveToHereX != 1 || brickToMoveY - moveToHereY == 2 && brickToMoveX - moveToHereX != -1)
-                        if (brickToMoveY - moveToHereY == -2 && brickToMoveX - moveToHereX != 1 || brickToMoveY - moveToHereY == -2 && brickToMoveX - moveToHereX != -1)
-                            return true;
-
+            if (brickToMoveX - moveToHereX == 0 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == 0 && brickToMoveY - moveToHereY == -2)
+                return true;
+            else if (brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY == -2)
+                return true;
+            else if (brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY == -2)
+                return true;
+            else if (brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY == 0 || brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY == 0)
+                return true;
             return false;
         }
 

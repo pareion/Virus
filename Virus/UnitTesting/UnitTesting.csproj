@@ -51,7 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="TempBoard.cs" />
-    <Compile Include="UnitTest1.cs" />
+    <Compile Include="TestingBoard.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

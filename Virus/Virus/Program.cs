@@ -12,15 +12,14 @@ namespace Virus
         {
             Board board = new Board(10);
             board.StartGame();
-         /*   board.MoveBrick(1, 3, 3, 3, 4);
-            board.MoveBrick(1, 3, 3, 3, 2);
-            board.MoveBrick(1, 3, 3, 2, 4);
-            board.MoveBrick(1, 3, 3, 2, 3);
-            board.MoveBrick(1, 3, 3, 2, 2);
-            board.MoveBrick(1, 3, 3, 4, 4);
-            board.MoveBrick(1, 3, 3, 4, 3);
-            board.MoveBrick(1, 3, 3, 4, 2);*/
             board.Display();
+            Console.WriteLine();
+            int a = board.MoveBrick(1, 6, 3, 6, 4);
+            board.Display();
+           /* int b = board.MoveBrick(1, 6, 4, 6, 5);
+            board.Display();
+            int c = board.MoveBrick(1, 6, 5, 6, 6);
+            board.Display();*/
         }
     }
 }

@@ -16,28 +16,23 @@ namespace UnitTesting
         }
         public void SetupBoardForCapture()
         {
-            board[3, 0] = 1;
-            board[2, 2] = 2;
-            board[2, 3] = 2;
-            board[2, 4] = 2;
-            board[4, 2] = 2;
-            board[4, 3] = 2;
-            board[4, 4] = 2;
-            board[3, 4] = 2;
+            board[6, 3] = 1;
+            board[5, 5] = 2;
+            board[5, 6] = 2;
+            board[5, 7] = 2;
+            board[7, 5] = 2;
+            board[7, 6] = 2;
+            board[7, 7] = 2;
+            board[6, 7] = 2;
         }
         public override sbyte MoveBrick(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
             if (playerTurnsOn == false)
             {
-                if (playerNumber == playerTurn)
-                {
-                    return Move(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
-                }
-                else
-                    return -1;
+                return Move(playerNumber, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
             }
             else
-                return base.MoveBrick(playerNumber,brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+                return base.MoveBrick(playerNumber, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
         }
     }
 }
