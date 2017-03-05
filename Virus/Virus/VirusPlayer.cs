@@ -6,12 +6,8 @@ using System.Threading.Tasks;
 
 namespace Virus
 {
-    class Program
+    public interface VirusPlayer
     {
-        static void Main(string[] args)
-        {
-            Game game = new Game();
-            game.StartGame();
-        }
+        void play();
     }
 }

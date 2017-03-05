@@ -25,14 +25,14 @@ namespace UnitTesting
             board[7, 7] = 2;
             board[6, 7] = 2;
         }
-        public override sbyte MoveBrick(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        public override sbyte MoveBrick(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
             if (playerTurnsOn == false)
-            {
-                return Move(playerNumber, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+            {                
+                return Move(playerTurn,brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
             }
             else
-                return base.MoveBrick(playerNumber, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+                return base.MoveBrick(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
         }
     }
 }
