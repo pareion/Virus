@@ -11,7 +11,7 @@ namespace Virus
         Board board;
         sbyte playerNumber;
         Random rng = new Random();
-        public RandomComputer(ref Board board, sbyte playerNumber)
+        public RandomComputer(Board board, sbyte playerNumber)
         {
             this.board = board;
             this.playerNumber = playerNumber;

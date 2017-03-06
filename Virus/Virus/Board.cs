@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace Virus
 {
-    public class Board : ICloneable
+    public class Board
     {
         public sbyte[,] board;
-        public int boardSize { get; private set; }
+        public int boardSize { get; set; }
 
-        protected sbyte playerTurn;
-        private bool jumping = false;
-        private VirusPlayer player1, player2, currentPlayer;
+        public sbyte playerTurn;
+        public bool jumping = false;
+        private VirusPlayer player1, player2;
         public Board(int size)
         {
             board = new sbyte[size, size];
@@ -27,7 +28,6 @@ namespace Virus
             board[boardSize - 1, 0] = 2;
             board[0, boardSize - 1] = 2;
             playerTurn = 1;
-            currentPlayer = player1;
         }
         /// <summary>
         /// Returns the number of points for all players starting with player 1 (0 indexed)
@@ -61,7 +61,6 @@ namespace Virus
             board[boardSize - 1, 0] = 2;
             board[0, boardSize - 1] = 2;
             playerTurn = 1;
-            currentPlayer = player1;
         }
         public bool IsDone()
         {
@@ -80,7 +79,6 @@ namespace Virus
         }
         public void Display()
         {
-            Thread.Sleep(1000);
             Console.Clear();
             for (int a = 0; a < boardSize; a++)
             {
@@ -108,24 +106,20 @@ namespace Virus
                 if (playerTurn == 1)
                 {
                     playerTurn = 2;
-                    currentPlayer = player2;
                 }
                 else if (playerTurn == 2)
                 {
                     playerTurn = 1;
-                    currentPlayer = player1;
                 }
                 if (CantMove())
                 {
                     if (playerTurn == 1)
                     {
                         playerTurn = 2;
-                        currentPlayer = player2;
                     }
                     else if (playerTurn == 2)
                     {
                         playerTurn = 1;
-                        currentPlayer = player1;
                     }
                 }
             }
@@ -206,7 +200,7 @@ namespace Virus
                 {
                     if (board[x, y] != 0 && board[x, y] == playerNumber)
                     {
-                        result.Add(new Tuple<sbyte, sbyte, sbyte>(board[x, y], (sbyte)x, (sbyte)y));
+                        result.Add(new Tuple<sbyte, sbyte, sbyte>((sbyte)playerNumber, (sbyte)x, (sbyte)y));
                     }
                 }
             }
@@ -260,43 +254,101 @@ namespace Virus
                     {
                         if (i == -1)
                         {
-                            if (board[moveToHereX - i, moveToHereY - 3] != 0 && board[moveToHereX - i, moveToHereY - 3] != player)
+                            try
                             {
-                                taken++;
+                                if (board[moveToHereX - 1, moveToHereY - 3] != 0 && board[moveToHereX - 1, moveToHereY - 3] != player)
+                                {
+                                    taken++;
+                                }
                             }
-                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                            catch (Exception)
                             {
-                                taken++;
+                                
                             }
-                            if (board[moveToHereX - i, moveToHereY + 3] != 0 && board[moveToHereX - i, moveToHereY + 3] != player)
+                            try
                             {
-                                taken++;
+                                if (board[moveToHereX - 1, moveToHereY] != 0 && board[moveToHereX - 1, moveToHereY] != player)
+                                {
+                                    taken++;
+                                }
                             }
+                            catch (Exception)
+                            {
+                                
+                            }
+                            try
+                            {
+                                if (board[moveToHereX - 1, moveToHereY + 3] != 0 && board[moveToHereX - 1, moveToHereY + 3] != player)
+                                {
+                                    taken++;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                
+                            }
+                            
                         }
                         if (i == 0)
                         {
-                            if (board[moveToHereX, moveToHereY - 3] != 0 && board[moveToHereX, moveToHereY - 3] != player)
+                            try
                             {
-                                taken++;
+                                if (board[moveToHereX + 1, moveToHereY - 3] != 0 && board[moveToHereX + 1, moveToHereY - 3] != player)
+                                {
+                                    taken++;
+                                }
                             }
-                            if (board[moveToHereX, moveToHereY + 3] != 0 && board[moveToHereX, moveToHereY + 3] != player)
+                            catch (Exception)
                             {
-                                taken++;
+                                
+                            }
+                            try
+                            {
+                                if (board[moveToHereX + 1, moveToHereY + 3] != 0 && board[moveToHereX + 1, moveToHereY + 3] != player)
+                                {
+                                    taken++;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                
                             }
                         }
                         if (i == 1)
                         {
-                            if (board[moveToHereX - i, moveToHereY - 3] != 0 && board[moveToHereX - i, moveToHereY - 3] != player)
+                            try
                             {
-                                taken++;
+                                if (board[moveToHereX + i, moveToHereY - 3] != 0 && board[moveToHereX + i, moveToHereY - 3] != player)
+                                {
+                                    taken++;
+                                }
                             }
-                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
+                            catch (Exception)
                             {
-                                taken++;
+                                
                             }
-                            if (board[moveToHereX - i, moveToHereY + 3] != 0 && board[moveToHereX - i, moveToHereY + 3] != player)
+
+                            try
                             {
-                                taken++;
+                                if (board[moveToHereX + i, moveToHereY] != 0 && board[moveToHereX + i, moveToHereY] != player)
+                                {
+                                    taken++;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                
+                            }
+                            try
+                            {
+                                if (board[moveToHereX + i, moveToHereY + 3] != 0 && board[moveToHereX + i, moveToHereY + 3] != player)
+                                {
+                                    taken++;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                
                             }
                         }
                     }
@@ -312,54 +364,109 @@ namespace Virus
                 //Normal move
                 for (int i = -1; i <= 1; i++)
                 {
-                    try
+
+                    if (i == -1)
                     {
-                        if (i == -1)
+                        try
                         {
-                            if (board[moveToHereX - i, moveToHereY - 1] != 0 && board[moveToHereX - i, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
-                            {
-                                taken++;
-                            }
-                            if (board[moveToHereX - i, moveToHereY + 1] != 0 && board[moveToHereX - i, moveToHereY + 1] != player)
+                            if (board[moveToHereX - 1, moveToHereY - 1] != 0 && board[moveToHereX - 1, moveToHereY - 1] != player)
                             {
                                 taken++;
                             }
                         }
-                        if (i == 0)
+                        catch
                         {
-                            if (board[moveToHereX, moveToHereY - 1] != 0 && board[moveToHereX, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                            if (board[moveToHereX, moveToHereY + 1] != 0 && board[moveToHereX, moveToHereY + 1] != player)
+
+                        }
+                        try
+                        {
+                            if (board[moveToHereX - 1, moveToHereY] != 0 && board[moveToHereX - 1, moveToHereY] != player)
                             {
                                 taken++;
                             }
                         }
-                        if (i == 1)
+                        catch
                         {
-                            if (board[moveToHereX - i, moveToHereY - 1] != 0 && board[moveToHereX - i, moveToHereY - 1] != player)
+
+                        }
+                        try
+                        {
+                            if (board[moveToHereX - 1, moveToHereY + 1] != 0 && board[moveToHereX - 1, moveToHereY + 1] != player)
                             {
                                 taken++;
                             }
-                            if (board[moveToHereX - i, moveToHereY] != 0 && board[moveToHereX - i, moveToHereY] != player)
-                            {
-                                taken++;
-                            }
-                            if (board[moveToHereX - i, moveToHereY + 1] != 0 && board[moveToHereX - i, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
+                        }
+                        catch
+                        {
+
                         }
                     }
-                    catch (Exception)
+                    if (i == 0)
                     {
+                        try
+                        {
+                            if (board[moveToHereX + 1, moveToHereY - 1] != 0 && board[moveToHereX + 1, moveToHereY - 1] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                        try
+                        {
+                            if (board[moveToHereX + 1, moveToHereY + 1] != 0 && board[moveToHereX + 1, moveToHereY + 1] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            
+                        }
 
                     }
+                    if (i == 1)
+                    {
+                        try
+                        {
+                            if (board[moveToHereX + i, moveToHereY - 1] != 0 && board[moveToHereX + i, moveToHereY - 1] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                        try
+                        {
+                            if (board[moveToHereX + i, moveToHereY] != 0 && board[moveToHereX + i, moveToHereY] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+                        try
+                        {
+                            if (board[moveToHereX + i, moveToHereY + 1] != 0 && board[moveToHereX + i, moveToHereY + 1] != player)
+                            {
+                                taken++;
+                            }
+                        }
+                        catch (Exception)
+                        {
+
+                        }
+
+
+
+                    }
+
                 }
             }
 
@@ -463,18 +570,15 @@ namespace Virus
 
         private bool IsMoveEligable(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
-            if (brickToMoveX - moveToHereX < 3 && brickToMoveX - moveToHereX > -3 && brickToMoveY - moveToHereY < 3 && brickToMoveY - moveToHereY > -3)
+            if (IsJumpEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
             {
-                if (IsJumpEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
-                {
-                    jumping = true;
-                    return jumping;
-                }
-                else if (IsNormalMoveEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
-                {
-                    jumping = false;
-                    return true;
-                }
+                jumping = true;
+                return jumping;
+            }
+            else if (IsNormalMoveEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
+            {
+                jumping = false;
+                return true;
             }
             return false;
         }
@@ -521,9 +625,10 @@ namespace Virus
             return false;
         }
 
-        public object Clone()
+        public Board Copy()
         {
-            return this.MemberwiseClone();
+            var serialized = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<Board>(serialized);
         }
     }
 }

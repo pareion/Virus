@@ -17,10 +17,10 @@ namespace Virus
         float bestScoreMax;
         sbyte playerNumber;
 
-        public MiniMaxComputer(ref Board board, sbyte playerNumber)
+        public MiniMaxComputer(Board board, sbyte playerNumber)
         {
             counter = 0;
-            maxcounter = 5;
+            maxcounter = 2;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -34,33 +34,34 @@ namespace Virus
             Move bestMove = null;
             float bestScore = -9999;
             float minscore;
-            int counter = 0;
+            counter = 0;
             // find bricks you can use
             List<Move> moves = FindAvailableMoves(board, playerNumber);
 
-            if (moves != null)
-                for (int b = 0; b < moves.Count; b++)
-                {
-                    tempBoard = (Board)board.Clone();
-                    tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                    minscore = MIN();
-                    if (minscore >= bestScore)
-                    {
-                        bestMove = moves[b];
-                        bestScore = minscore;
-                    }
-                    this.counter = 0;
-                    maxcounter = 0;
-                }
             try
             {
+                bestMove = moves[0];
+                if (moves != null)
+                    for (int b = 0; b < moves.Count; b++)
+                    {
+                        tempBoard = board.Copy();
+                        tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        minscore = MIN();
+                        if (minscore > bestScore)
+                        {
+                            bestMove = moves[b];
+                            bestScore = minscore;
+                        }
+                        this.counter = 0;
+                        maxcounter = 0;
+                    }
                 board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
             }
             catch (Exception)
             {
-                
+
             }
-            
+
         }
         private float MIN()
         {
@@ -77,7 +78,7 @@ namespace Virus
                     List<Move> moves = FindAvailableMoves(tempBoard, 1);
                     foreach (var item in moves)
                     {
-                        previousBoard = tempBoard;
+                        previousBoard = tempBoard.Copy();
                         tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
                         float score = MAX();
                         beta = score;
@@ -91,7 +92,7 @@ namespace Virus
                         {
                             bestScoreMin = score;
                         }
-                        tempBoard = previousBoard;
+                        tempBoard = previousBoard.Copy();
                     }
                 }
                 return bestScoreMin;
@@ -107,7 +108,6 @@ namespace Virus
             }
             else
             {
-
                 bestScoreMax = -9999;
                 done = false;
             done: if (!done)
@@ -115,7 +115,7 @@ namespace Virus
                     List<Move> moves = FindAvailableMoves(tempBoard, 2);
                     foreach (var item in moves)
                     {
-                        previousBoard = tempBoard;
+                        previousBoard = tempBoard.Copy();
                         tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
                         float score = MIN();
                         beta = score;
@@ -129,7 +129,7 @@ namespace Virus
                         {
                             bestScoreMax = score;
                         }
-                        tempBoard = previousBoard;
+                        tempBoard = previousBoard.Copy();
                     }
                 }
                 return bestScoreMin;
@@ -143,9 +143,13 @@ namespace Virus
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)
                 {
-                    if (tempBoard.board[x,y] == 1)
+                    if (tempBoard.board[x, y] == 1)
                     {
-                        points += 1;
+                        points += 2;
+                    }
+                    if (tempBoard.board[x, y] == 2)
+                    {
+                        points -= 2;
                     }
                 }
             }
@@ -163,7 +167,7 @@ namespace Virus
 
         private bool isGameOverHuman()
         {
-            if (FindAvailableMoves(tempBoard, 1).Count > 0)
+            if (FindAvailableMoves(tempBoard, 2).Count > 0)
             {
                 return false;
             }
@@ -171,7 +175,7 @@ namespace Virus
         }
         private bool isGameOverComputer()
         {
-            if (FindAvailableMoves(tempBoard, 2).Count > 0)
+            if (FindAvailableMoves(tempBoard, 1).Count > 0)
             {
                 return false;
             }
@@ -206,6 +210,7 @@ namespace Virus
                             {
                                 moves.Add(curnMove);
                             }
+
                         }
                     }
                 }

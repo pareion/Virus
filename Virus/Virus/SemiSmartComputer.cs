@@ -11,7 +11,7 @@ namespace Virus
         Board board;
         sbyte playerNumber;
         Random rng = new Random();
-        public SemiSmartComputer(ref Board board, sbyte playerNumber)
+        public SemiSmartComputer(Board board, sbyte playerNumber)
         {
             this.board = board;
             this.playerNumber = playerNumber;
@@ -57,7 +57,7 @@ namespace Virus
                         else
                             y2 = (sbyte)(bricks[i].Item3 - y);
 
-                        sbyte result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x2, y2);
+                        sbyte result = board.TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x2, y2);
                         if (result != -1)
                         {
                             Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x2, toY = y2, moveValue = (sbyte)(result + rng.Next(5)) };
@@ -84,10 +84,10 @@ namespace Virus
                         else
                             y3 = (sbyte)(bricks[i].Item3 - y2);
 
-                        sbyte result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x3, y3);
+                        sbyte result = board.TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x3, y3);
                         if (result != -1)
                         {
-                            Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x3, toY = y3, moveValue = result };
+                            Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x3, toY = y3, moveValue = (sbyte)(result + rng.Next(5)) };
                             if (!moves.Contains(curnMove))
                             {
                                 moves.Add(curnMove);
