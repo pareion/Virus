@@ -17,9 +17,9 @@ namespace Virus
         }
         public void StartGame()
         {
-            PlayGame(10);
+            PlayGame(8);
             RandomComputer player1 = new RandomComputer(ref board, 1);
-            RandomComputer player2 = new RandomComputer(ref board, 2);
+            SemiSmartComputer player2 = new SemiSmartComputer(ref board, 2);
             board.SetPlayer1(player1);
             board.SetPlayer2(player2);
             int[] result = new int[2];
@@ -27,9 +27,10 @@ namespace Virus
             {
                 while (!board.IsDone())
                 {
+                    board.Display();
                     player1.play();
                     player2.play();
-                    board.Display();
+                    
                 }
                 sbyte[] result2 = board.GetScore();
                 for (int a = 0; a < result2.Count(); a++)
@@ -43,6 +44,7 @@ namespace Virus
             {
                 Console.WriteLine("Player " + i + " points: " + result[i]);
             }
+            Console.Read();
         }
     }
 }

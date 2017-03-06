@@ -6,35 +6,40 @@ using System.Threading.Tasks;
 
 namespace Virus
 {
-    public class RandomComputer : VirusPlayer
+    class SemiSmartComputer : VirusPlayer
     {
         Board board;
         sbyte playerNumber;
         Random rng = new Random();
-        public RandomComputer(ref Board board, sbyte playerNumber)
+        public SemiSmartComputer(ref Board board, sbyte playerNumber)
         {
             this.board = board;
             this.playerNumber = playerNumber;
         }
-
         public void play()
         {
-            List<Tuple<sbyte, sbyte, sbyte, sbyte>> result = FindAvailableMoves();
+            List<Move> result = FindAvailableMoves();
             if (result.Count > 0)
             {
-                int a = rng.Next(result.Count - 1);
-                board.MoveBrick(result[a].Item1, result[a].Item2, result[a].Item3, result[a].Item4);
+                Move bestMove = result[0];
+                for (int i = 1; i < result.Count(); i++)
+                {
+                    if (bestMove.moveValue < result[i].moveValue)
+                    {
+                        bestMove = result[i];
+                    }
+                }
+                board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
             }
             else
             {
-                //Can't move
+                //Can't move 
             }
         }
-
-        private List<Tuple<sbyte, sbyte, sbyte, sbyte>> FindAvailableMoves()
+        private List<Move> FindAvailableMoves()
         {
             List<Tuple<sbyte, sbyte, sbyte>> bricks = board.GetBricks(playerNumber);
-            List<Tuple<sbyte, sbyte, sbyte, sbyte>> moves = new List<Tuple<sbyte, sbyte, sbyte, sbyte>>();
+            List<Move> moves = new List<Move>();
             for (int i = 0; i < bricks.Count; i++)
             {
                 for (int x = -1; x <= 1; x++)
@@ -55,13 +60,15 @@ namespace Virus
                         sbyte result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x2, y2);
                         if (result != -1)
                         {
-                            if (!moves.Contains(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x2, y2)))
+                            Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x2, toY = y2, moveValue = (sbyte)(result + rng.Next(5)) };
+                            if (!moves.Contains(curnMove))
                             {
-                                moves.Add(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x2, y2));
+                                moves.Add(curnMove);
                             }
                         }
                     }
                 }
+
                 for (int x2 = -2; x2 < 3; x2 = x2 + 2)
                 {
                     for (int y2 = -2; y2 < 3; y2 = y2 + 2)
@@ -80,15 +87,25 @@ namespace Virus
                         sbyte result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x3, y3);
                         if (result != -1)
                         {
-                            if (!moves.Contains(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x3, y3)))
+                            Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x3, toY = y3, moveValue = result };
+                            if (!moves.Contains(curnMove))
                             {
-                                moves.Add(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x3, y3));
+                                moves.Add(curnMove);
                             }
                         }
                     }
                 }
             }
             return moves;
+        }
+
+        private class Move
+        {
+            public sbyte fromX;
+            public sbyte fromY;
+            public sbyte toX;
+            public sbyte toY;
+            public sbyte moveValue;
         }
     }
 }

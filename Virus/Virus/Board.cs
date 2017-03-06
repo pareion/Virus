@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Virus
 {
-    public class Board
+    public class Board : ICloneable
     {
-        protected sbyte[,] board;
+        public sbyte[,] board;
         public int boardSize { get; private set; }
 
         protected sbyte playerTurn;
@@ -63,7 +63,6 @@ namespace Virus
             playerTurn = 1;
             currentPlayer = player1;
         }
-
         public bool IsDone()
         {
             if (GetBricks().Count == boardSize * boardSize)
@@ -81,6 +80,7 @@ namespace Virus
         }
         public void Display()
         {
+            Thread.Sleep(1000);
             Console.Clear();
             for (int a = 0; a < boardSize; a++)
             {
@@ -102,6 +102,7 @@ namespace Virus
         public virtual sbyte MoveBrick(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
             sbyte move = Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+
             if (move != -1)
             {
                 if (playerTurn == 1)
@@ -114,21 +115,22 @@ namespace Virus
                     playerTurn = 1;
                     currentPlayer = player1;
                 }
-                return move;
-            }
-            if (CantMove())
-            {
-                if (playerTurn == 1)
+                if (CantMove())
                 {
-                    playerTurn = 2;
-                    currentPlayer = player2;
-                }
-                else if (playerTurn == 2)
-                {
-                    playerTurn = 1;
-                    currentPlayer = player1;
+                    if (playerTurn == 1)
+                    {
+                        playerTurn = 2;
+                        currentPlayer = player2;
+                    }
+                    else if (playerTurn == 2)
+                    {
+                        playerTurn = 1;
+                        currentPlayer = player1;
+                    }
                 }
             }
+
+
             return move;
         }
 
@@ -517,6 +519,11 @@ namespace Virus
 
             }
             return false;
+        }
+
+        public object Clone()
+        {
+            return this.MemberwiseClone();
         }
     }
 }
