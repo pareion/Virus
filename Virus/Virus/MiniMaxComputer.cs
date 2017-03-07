@@ -20,7 +20,7 @@ namespace Virus
         public MiniMaxComputer(Board board, sbyte playerNumber)
         {
             counter = 0;
-            maxcounter = 5;
+            maxcounter = 1;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -36,8 +36,21 @@ namespace Virus
             float minscore;
             counter = 0;
             // find bricks you can use
-            List<Move> moves = board.FindAvailableMoves(playerNumber);
-
+            List<Move> moves2 = board.FindAvailableMoves(playerNumber);
+            List<Move> moves = new List<Move>();
+            Move curn = moves2[0];
+            foreach (var item in moves2)
+            {
+                if (item.moveValue > curn.moveValue)
+                {
+                    moves.Add(item);
+                    curn = item;
+                }
+            }
+            if (curn.Equals(moves2[0]))
+            {
+                moves.Add(curn);
+            }
             try
             {
                 bestMove = moves[0];
@@ -172,7 +185,7 @@ namespace Virus
 
         private bool isGameOverHuman()
         {
-            if (tempBoard.FindAvailableMoves(2).Count > 0)
+            if (tempBoard.FindAvailableMoves(1).Count > 0)
             {
                 return false;
             }
@@ -180,7 +193,7 @@ namespace Virus
         }
         private bool isGameOverComputer()
         {
-            if (tempBoard.FindAvailableMoves(1).Count > 0)
+            if (tempBoard.FindAvailableMoves(2).Count > 0)
             {
                 return false;
             }

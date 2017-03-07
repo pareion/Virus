@@ -19,8 +19,8 @@ namespace Virus
         {
             PlayGame(8);
             MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
-            // SemiSmartComputer player1 = new SemiSmartComputer(board, 1);
-            RandomComputer player2 = new RandomComputer(board, 2);
+            SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
+           // RandomComputer player2 = new RandomComputer(board, 2);
 
             int[] result = new int[2];
             for (int i = 0; i < 10; i++)
@@ -28,8 +28,11 @@ namespace Virus
                 while (!board.IsDone())
                 {
                     player1.play();
+                    /*board.Display();
+                    Thread.Sleep(1000);*/
                     player2.play();
                     board.Display();
+                    //Thread.Sleep(1000);
                 }
                 sbyte[] result2 = board.GetScore();
                 for (int a = 0; a < result2.Count(); a++)
