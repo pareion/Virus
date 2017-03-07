@@ -10,14 +10,14 @@ namespace Virus
 {
     public class Board
     {
-        public sbyte[,] board;
+        public int[,] board;
         public int boardSize { get; set; }
 
-        public sbyte playerTurn;
+        public int playerTurn;
         public bool jumping = false;
         public Board(int size)
         {
-            board = new sbyte[size, size];
+            board = new int[size, size];
             boardSize = size;
         }
         public void StartGame()
@@ -32,9 +32,9 @@ namespace Virus
         /// Returns the number of points for all players starting with player 1 (0 indexed)
         /// </summary>
         /// <returns></returns>
-        internal sbyte[] GetScore()
+        internal int[] GetScore()
         {
-            sbyte[] result = new sbyte[2];
+            int[] result = new int[2];
             for (int x = 0; x < boardSize; x++)
             {
                 for (int y = 0; y < boardSize; y++)
@@ -54,7 +54,7 @@ namespace Virus
 
         internal void reset()
         {
-            board = new sbyte[boardSize, boardSize];
+            board = new int[boardSize, boardSize];
             board[0, 0] = 1;
             board[boardSize - 1, boardSize - 1] = 1;
             board[boardSize - 1, 0] = 2;
@@ -95,9 +95,9 @@ namespace Virus
         /// <param name="brickToMove"></param>
         /// <param name="moveToHere"></param>
         /// <returns></returns>
-        public virtual sbyte MoveBrick(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        public virtual int MoveBrick(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
-            sbyte move = Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
+            int move = Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
 
             if (move != -1)
             {
@@ -127,27 +127,27 @@ namespace Virus
         }
         public List<Move> FindAvailableMoves(int playerNumber)
         {
-            List<Tuple<sbyte, sbyte, sbyte>> bricks = GetBricks(playerNumber);
+            List<Tuple<int, int, int>> bricks = GetBricks(playerNumber);
             List<Move> moves = new List<Move>();
-            sbyte player = (sbyte)playerNumber;
+            int player = playerNumber;
             for (int i = 0; i < bricks.Count; i++)
             {
                 for (int x = -1; x <= 1; x++)
                 {
                     for (int y = -1; y <= 1; y++)
                     {
-                        sbyte x2 = -1;
-                        sbyte y2 = -1;
+                        int x2 = -1;
+                        int y2 = -1;
                         if (x > bricks[i].Item2)
-                            x2 = (sbyte)(x - bricks[i].Item2);
+                            x2 = (x - bricks[i].Item2);
                         else
-                            x2 = (sbyte)(bricks[i].Item2 - x);
+                            x2 = (bricks[i].Item2 - x);
                         if (y > bricks[i].Item3)
-                            y2 = (sbyte)(y - bricks[i].Item3);
+                            y2 = (y - bricks[i].Item3);
                         else
-                            y2 = (sbyte)(bricks[i].Item3 - y);
+                            y2 = (bricks[i].Item3 - y);
 
-                        sbyte result = TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x2, y2);
+                        int result = TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x2, y2);
                         if (result != -1)
                         {
                             Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x2, toY = y2, moveValue = result };
@@ -171,21 +171,21 @@ namespace Virus
                 {
                     for (int y2 = -2; y2 < 3; y2 = y2 + 2)
                     {
-                        sbyte x3 = -1;
-                        sbyte y3 = -1;
+                        int x3 = -1;
+                        int y3 = -1;
                         if (x2 > bricks[i].Item2)
-                            x3 = (sbyte)(x2 - bricks[i].Item2);
+                            x3 = (x2 - bricks[i].Item2);
                         else
-                            x3 = (sbyte)(bricks[i].Item2 - x2);
+                            x3 = (bricks[i].Item2 - x2);
                         if (y2 > bricks[i].Item3)
-                            y3 = (sbyte)(y2 - bricks[i].Item3);
+                            y3 = (y2 - bricks[i].Item3);
                         else
-                            y3 = (sbyte)(bricks[i].Item3 - y2);
+                            y3 = (bricks[i].Item3 - y2);
 
-                        sbyte result = TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x3, y3);
+                        int result = TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x3, y3);
                         if (result != -1)
                         {
-                            Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x3, toY = y3, moveValue = (sbyte)(result) };
+                            Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x3, toY = y3, moveValue = (result) };
                             bool exists = false;
                             foreach (var item in moves)
                             {
@@ -215,18 +215,18 @@ namespace Virus
                 {
                     for (int y = -1; y <= 1; y++)
                     {
-                        sbyte x2 = -1;
-                        sbyte y2 = -1;
+                        int x2 = -1;
+                        int y2 = -1;
                         if (x > item.Item2)
-                            x2 = (sbyte)(x - item.Item2);
+                            x2 = (x - item.Item2);
                         else
-                            x2 = (sbyte)(item.Item2 - x);
+                            x2 = (item.Item2 - x);
                         if (y > item.Item3)
-                            y2 = (sbyte)(y - item.Item3);
+                            y2 = (y - item.Item3);
                         else
-                            y2 = (sbyte)(item.Item3 - y);
+                            y2 = (item.Item3 - y);
 
-                        sbyte result = TryMakeMove(playerTurn, item.Item2, item.Item3, x2, y2);
+                        int result = TryMakeMove(playerTurn, item.Item2, item.Item3, x2, y2);
                         if (result != -1)
                         {
                             return false;
@@ -241,16 +241,16 @@ namespace Virus
         /// The method returns a list with the player number followed by the index of the brick
         /// </summary>
         /// <returns></returns>
-        public List<Tuple<sbyte, sbyte, sbyte>> GetBricks()
+        public List<Tuple<int, int, int>> GetBricks()
         {
-            List<Tuple<sbyte, sbyte, sbyte>> result = new List<Tuple<sbyte, sbyte, sbyte>>();
+            List<Tuple<int, int, int>> result = new List<Tuple<int, int, int>>();
             for (int x = 0; x < boardSize; x++)
             {
                 for (int y = 0; y < boardSize; y++)
                 {
                     if (board[x, y] != 0)
                     {
-                        result.Add(new Tuple<sbyte, sbyte, sbyte>(board[x, y], (sbyte)x, (sbyte)y));
+                        result.Add(new Tuple<int, int, int>(board[x, y], x, y));
                     }
                 }
             }
@@ -261,22 +261,22 @@ namespace Virus
         /// to the playerNumber
         /// </summary>
         /// <returns></returns>
-        public List<Tuple<sbyte, sbyte, sbyte>> GetBricks(int playerNumber)
+        public List<Tuple<int, int, int>> GetBricks(int playerNumber)
         {
-            List<Tuple<sbyte, sbyte, sbyte>> result = new List<Tuple<sbyte, sbyte, sbyte>>();
+            List<Tuple<int, int, int>> result = new List<Tuple<int, int, int>>();
             for (int x = 0; x < boardSize; x++)
             {
                 for (int y = 0; y < boardSize; y++)
                 {
                     if (board[x, y] == playerNumber)
                     {
-                        result.Add(new Tuple<sbyte, sbyte, sbyte>((sbyte)playerNumber, (sbyte)x, (sbyte)y));
+                        result.Add(new Tuple<int, int, int>(playerNumber, x, y));
                     }
                 }
             }
             return result;
         }
-        protected sbyte Move(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        protected int Move(int playerNumber, int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             if (IsOnTheBoard(moveToHereX, moveToHereY))
                 if (IsAPiece(playerNumber, brickToMoveX, brickToMoveY))
@@ -286,7 +286,7 @@ namespace Virus
             return -1;
         }
 
-        private bool IsAPiece(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY)
+        private bool IsAPiece(int playerNumber, int brickToMoveX, int brickToMoveY)
         {
             if (board[brickToMoveX, brickToMoveY] == playerNumber)
                 return true;
@@ -301,9 +301,9 @@ namespace Virus
         /// <param name="moveToHereX"></param>
         /// <param name="moveToHereY"></param>
         /// <returns></returns>
-        public sbyte TryMakeMove(sbyte playerNumber, sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        public int TryMakeMove(int playerNumber, int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
-            sbyte player = playerNumber;
+            int player = playerNumber;
             if (!IsAPiece(playerNumber, brickToMoveX, brickToMoveY))
                 return -1;
             if (!IsNotOccupied(moveToHereX, moveToHereY))
@@ -313,7 +313,7 @@ namespace Virus
             if (!IsOnTheBoard(moveToHereX, moveToHereY))
                 return -1;
 
-            sbyte taken = 0;
+            int taken = 0;
 
             //Jump move
             //Jump move
@@ -326,14 +326,14 @@ namespace Virus
             else
             {
                 //Normal move
-                taken += (sbyte)(AssumeCapturedPieces(moveToHereX, moveToHereY, player) + 1);
+                taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player) + 1;
 
             }
 
             return taken;
         }
 
-        private bool IsOnTheBoard(sbyte moveToHereX, sbyte moveToHereY)
+        private bool IsOnTheBoard(int moveToHereX, int moveToHereY)
         {
             try
             {
@@ -349,11 +349,11 @@ namespace Virus
             return true;
         }
 
-        private sbyte MakeMove(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        private int MakeMove(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
-            sbyte player = board[brickToMoveX, brickToMoveY];
+            int player = board[brickToMoveX, brickToMoveY];
 
-            sbyte taken = 0;
+            int taken = 0;
 
             //Jump move
             if (jumping)
@@ -367,7 +367,7 @@ namespace Virus
             else
             {
                 //Normal move
-                taken += (sbyte)CapturePieces(moveToHereX, moveToHereY, player);
+                taken += CapturePieces(moveToHereX, moveToHereY, player);
                 taken += 1;
                 board[moveToHereX, moveToHereY] = player;
 
@@ -375,9 +375,9 @@ namespace Virus
 
             return taken;
         }
-        private sbyte AssumeCapturedPieces(sbyte moveToHereX, sbyte moveToHereY, sbyte player)
+        private int AssumeCapturedPieces(int moveToHereX, int moveToHereY, int player)
         {
-            sbyte taken = 0;
+            int taken = 0;
             try
             {
                 if (board[moveToHereX - 1, moveToHereY - 1] != 0 && board[moveToHereX - 1, moveToHereY - 1] != player)
@@ -471,9 +471,9 @@ namespace Virus
             }
             return taken;
         }
-        private sbyte CapturePieces(sbyte moveToHereX, sbyte moveToHereY, sbyte player)
+        private int CapturePieces(int moveToHereX, int moveToHereY, int player)
         {
-            sbyte taken = 0;
+            int taken = 0;
             try
             {
                 if (board[moveToHereX - 1, moveToHereY - 1] != 0 && board[moveToHereX - 1, moveToHereY - 1] != player)
@@ -576,7 +576,7 @@ namespace Virus
             return taken;
         }
 
-        private bool IsMoveEligable(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        private bool IsMoveEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             if (IsJumpEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
             {
@@ -591,7 +591,7 @@ namespace Virus
             return false;
         }
 
-        private bool IsNormalMoveEligable(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        private bool IsNormalMoveEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             if (brickToMoveX - moveToHereX == 1 || -1 == brickToMoveX - moveToHereX && brickToMoveY - moveToHereY == 1 || brickToMoveY - moveToHereY == -1)
             {
@@ -600,7 +600,7 @@ namespace Virus
             return false;
         }
 
-        private bool IsJumpEligable(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        private bool IsJumpEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             if (brickToMoveX - moveToHereX == 0 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == 0 && brickToMoveY - moveToHereY == -2)
                 return true;
@@ -613,7 +613,7 @@ namespace Virus
             return false;
         }
 
-        private bool IsNotOccupied(sbyte moveToHereX, sbyte moveToHereY)
+        private bool IsNotOccupied(int moveToHereX, int moveToHereY)
         {
             try
             {

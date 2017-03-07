@@ -8,10 +8,10 @@ namespace Virus
 {
     public class Move
     {
-        public sbyte fromX;
-        public sbyte fromY;
-        public sbyte toX;
-        public sbyte toY;
-        public sbyte moveValue;
+        public int fromX;
+        public int fromY;
+        public int toX;
+        public int toY;
+        public int moveValue;
     }
 }

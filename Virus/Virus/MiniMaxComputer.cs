@@ -15,12 +15,12 @@ namespace Virus
         bool done = false;
         float bestScoreMin;
         float bestScoreMax;
-        sbyte playerNumber;
+        int playerNumber;
 
-        public MiniMaxComputer(Board board, sbyte playerNumber)
+        public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 1;
+            maxcounter = 5;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -31,6 +31,8 @@ namespace Virus
 
         private void MiniMax(Board board)
         {
+            try
+            {
             Move bestMove = null;
             float bestScore = -9999;
             float minscore;
@@ -51,8 +53,6 @@ namespace Virus
             {
                 moves.Add(curn);
             }
-            try
-            {
                 bestMove = moves[0];
                 if (moves != null)
                     for (int b = 0; b < moves.Count; b++)

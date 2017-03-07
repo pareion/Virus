@@ -9,9 +9,9 @@ namespace Virus
     class SemiSmartComputer : VirusPlayer
     {
         Board board;
-        sbyte playerNumber;
+        int playerNumber;
         Random rng = new Random();
-        public SemiSmartComputer(Board board, sbyte playerNumber)
+        public SemiSmartComputer(Board board, int playerNumber)
         {
             this.board = board;
             this.playerNumber = playerNumber;

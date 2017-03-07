@@ -17,13 +17,13 @@ namespace Virus
         }
         public void StartGame()
         {
-            PlayGame(8);
+            PlayGame(11);
             MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
             SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
            // RandomComputer player2 = new RandomComputer(board, 2);
 
             int[] result = new int[2];
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 15; i++)
             {
                 while (!board.IsDone())
                 {
@@ -34,7 +34,7 @@ namespace Virus
                     board.Display();
                     //Thread.Sleep(1000);
                 }
-                sbyte[] result2 = board.GetScore();
+                int[] result2 = board.GetScore();
                 for (int a = 0; a < result2.Count(); a++)
                 {
                     result[a] += result2[a];
@@ -56,7 +56,7 @@ namespace Virus
                     player4.play();
                     board.Display();
                 }
-                sbyte[] result2 = board.GetScore();
+                int[] result2 = board.GetScore();
                 for (int a = 0; a < result2.Count(); a++)
                 {
                     result[a] += result2[a];

@@ -9,9 +9,9 @@ namespace Virus
     public class RandomComputer : VirusPlayer
     {
         Board board;
-        sbyte playerNumber;
+        int playerNumber;
         Random rng = new Random();
-        public RandomComputer(Board board, sbyte playerNumber)
+        public RandomComputer(Board board, int playerNumber)
         {
             this.board = board;
             this.playerNumber = playerNumber;
@@ -19,7 +19,7 @@ namespace Virus
 
         public void play()
         {
-            List<Tuple<sbyte, sbyte, sbyte, sbyte>> result = FindAvailableMoves();
+            List<Tuple<int, int, int, int>> result = FindAvailableMoves();
             if (result.Count > 0)
             {
                 int a = rng.Next(result.Count - 1);
@@ -31,33 +31,33 @@ namespace Virus
             }
         }
 
-        private List<Tuple<sbyte, sbyte, sbyte, sbyte>> FindAvailableMoves()
+        private List<Tuple<int, int, int, int>> FindAvailableMoves()
         {
-            List<Tuple<sbyte, sbyte, sbyte>> bricks = board.GetBricks(playerNumber);
-            List<Tuple<sbyte, sbyte, sbyte, sbyte>> moves = new List<Tuple<sbyte, sbyte, sbyte, sbyte>>();
+            List<Tuple<int, int, int>> bricks = board.GetBricks(playerNumber);
+            List<Tuple<int, int, int, int>> moves = new List<Tuple<int, int, int, int>>();
             for (int i = 0; i < bricks.Count; i++)
             {
                 for (int x = -1; x <= 1; x++)
                 {
                     for (int y = -1; y <= 1; y++)
                     {
-                        sbyte x2 = -1;
-                        sbyte y2 = -1;
+                        int x2 = -1;
+                        int y2 = -1;
                         if (x > bricks[i].Item2)
-                            x2 = (sbyte)(x - bricks[i].Item2);
+                            x2 = (int)(x - bricks[i].Item2);
                         else
-                            x2 = (sbyte)(bricks[i].Item2 - x);
+                            x2 = (int)(bricks[i].Item2 - x);
                         if (y > bricks[i].Item3)
-                            y2 = (sbyte)(y - bricks[i].Item3);
+                            y2 = (int)(y - bricks[i].Item3);
                         else
-                            y2 = (sbyte)(bricks[i].Item3 - y);
+                            y2 = (int)(bricks[i].Item3 - y);
 
-                        sbyte result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x2, y2);
+                        int result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x2, y2);
                         if (result != -1)
                         {
-                            if (!moves.Contains(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x2, y2)))
+                            if (!moves.Contains(new Tuple<int, int, int, int>(bricks[i].Item2, bricks[i].Item3, x2, y2)))
                             {
-                                moves.Add(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x2, y2));
+                                moves.Add(new Tuple<int, int, int, int>(bricks[i].Item2, bricks[i].Item3, x2, y2));
                             }
                         }
                     }
@@ -66,23 +66,23 @@ namespace Virus
                 {
                     for (int y2 = -2; y2 < 3; y2 = y2 + 2)
                     {
-                        sbyte x3 = -1;
-                        sbyte y3 = -1;
+                        int x3 = -1;
+                        int y3 = -1;
                         if (x2 > bricks[i].Item2)
-                            x3 = (sbyte)(x2 - bricks[i].Item2);
+                            x3 = (x2 - bricks[i].Item2);
                         else
-                            x3 = (sbyte)(bricks[i].Item2 - x2);
+                            x3 = (bricks[i].Item2 - x2);
                         if (y2 > bricks[i].Item3)
-                            y3 = (sbyte)(y2 - bricks[i].Item3);
+                            y3 = (y2 - bricks[i].Item3);
                         else
-                            y3 = (sbyte)(bricks[i].Item3 - y2);
+                            y3 = (bricks[i].Item3 - y2);
 
-                        sbyte result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x3, y3);
+                        int result = board.TryMakeMove(playerNumber, bricks[i].Item2, bricks[i].Item3, x3, y3);
                         if (result != -1)
                         {
-                            if (!moves.Contains(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x3, y3)))
+                            if (!moves.Contains(new Tuple<int, int, int, int>(bricks[i].Item2, bricks[i].Item3, x3, y3)))
                             {
-                                moves.Add(new Tuple<sbyte, sbyte, sbyte, sbyte>(bricks[i].Item2, bricks[i].Item3, x3, y3));
+                                moves.Add(new Tuple<int, int, int, int>(bricks[i].Item2, bricks[i].Item3, x3, y3));
                             }
                         }
                     }

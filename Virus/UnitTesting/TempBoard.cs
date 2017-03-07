@@ -26,7 +26,7 @@ namespace UnitTesting
             board[7, 7] = 2;
             board[6, 7] = 2;
         }
-        public override sbyte MoveBrick(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
+        public override int MoveBrick(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             if (playerTurnsOn == false)
             {
