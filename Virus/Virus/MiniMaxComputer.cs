@@ -20,7 +20,7 @@ namespace Virus
         public MiniMaxComputer(Board board, sbyte playerNumber)
         {
             counter = 0;
-            maxcounter = 50;
+            maxcounter = 5;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -160,7 +160,7 @@ namespace Virus
                     {
                         points += 1;
                     }
-                    if (tempBoard.board[x, y] != playerNumber && tempBoard.board[x, y] != 0)
+                    if (tempBoard.board[x, y] != playerNumber)
                     {
                         points -= 1;
                     }

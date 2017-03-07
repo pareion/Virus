@@ -69,15 +69,23 @@ namespace Virus
         }
         public void Display()
         {
-            Console.Clear();
-            for (int a = 0; a < boardSize; a++)
+            try
             {
-                for (int i = 0; i < boardSize; i++)
+                Console.Clear();
+                for (int a = 0; a < boardSize; a++)
                 {
-                    Console.Write(board[a, i] + " ");
+                    for (int i = 0; i < boardSize; i++)
+                    {
+                        Console.Write(board[a, i] + " ");
+                    }
+                    Console.WriteLine();
                 }
-                Console.WriteLine();
             }
+            catch (Exception)
+            {
+                
+            }
+            
         }
         /// <summary>
         /// Returns -1 if it's not your turn or the move is not eligable
@@ -251,7 +259,7 @@ namespace Virus
             {
                 for (int y = 0; y < boardSize; y++)
                 {
-                    if (board[x, y] != 0 && board[x, y] == playerNumber)
+                    if (board[x, y] == playerNumber)
                     {
                         result.Add(new Tuple<sbyte, sbyte, sbyte>((sbyte)playerNumber, (sbyte)x, (sbyte)y));
                     }
@@ -301,6 +309,7 @@ namespace Virus
             //Jump move
             if (jumping)
             {
+                taken = -1;
                 for (int i = -1; i <= 1; i++)
                 {
                     try
@@ -415,112 +424,7 @@ namespace Virus
             else
             {
                 //Normal move
-                for (int i = -1; i <= 1; i++)
-                {
-
-                    if (i == -1)
-                    {
-                        try
-                        {
-                            if (board[moveToHereX - 1, moveToHereY - 1] != 0 && board[moveToHereX - 1, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX - 1, moveToHereY] != 0 && board[moveToHereX - 1, moveToHereY] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX - 1, moveToHereY + 1] != 0 && board[moveToHereX - 1, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                    if (i == 0)
-                    {
-                        try
-                        {
-                            if (board[moveToHereX + 1, moveToHereY - 1] != 0 && board[moveToHereX + 1, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX + 1, moveToHereY + 1] != 0 && board[moveToHereX + 1, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-                    }
-                    if (i == 1)
-                    {
-                        try
-                        {
-                            if (board[moveToHereX + i, moveToHereY - 1] != 0 && board[moveToHereX + i, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX + i, moveToHereY] != 0 && board[moveToHereX + i, moveToHereY] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX + i, moveToHereY + 1] != 0 && board[moveToHereX + i, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-
-
-                    }
-
-                }
+                taken += (sbyte)(CapturePieces(moveToHereX, moveToHereY, player) + 1);
             }
 
             return taken;
@@ -546,7 +450,7 @@ namespace Virus
         {
             sbyte player = board[brickToMoveX, brickToMoveY];
 
-            sbyte taken = 0;
+            sbyte taken = -1;
 
             //Jump move
             if (jumping)
@@ -650,7 +554,7 @@ namespace Virus
             else
             {
                 //Normal move
-                taken += CapturePieces(moveToHereX, moveToHereY, player);
+                taken += (sbyte)(CapturePieces(moveToHereX, moveToHereY, player) + 1);
                 board[moveToHereX, moveToHereY] = player;
 
             }
