@@ -76,11 +76,7 @@ namespace Virus
             done: if (!done)
                 {
                     List<Move> moves;
-                    if (playerNumber == 2)
-                    {
-                        moves = tempBoard.FindAvailableMoves(2);
-                    }
-                    else
+                 
                         moves = tempBoard.FindAvailableMoves(1);
 
                     foreach (var item in moves)
@@ -120,11 +116,7 @@ namespace Virus
             done: if (!done)
                 {
                     List<Move> moves;
-                    if (playerNumber == 1)
-                    {
                         moves = tempBoard.FindAvailableMoves(2);
-                    }else
-                        moves = tempBoard.FindAvailableMoves(1);
 
                     foreach (var item in moves)
                     {
@@ -180,7 +172,7 @@ namespace Virus
 
         private bool isGameOverHuman()
         {
-            if (tempBoard.FindAvailableMoves(1).Count > 0)
+            if (tempBoard.FindAvailableMoves(2).Count > 0)
             {
                 return false;
             }
@@ -188,7 +180,7 @@ namespace Virus
         }
         private bool isGameOverComputer()
         {
-            if (tempBoard.FindAvailableMoves(2).Count > 0)
+            if (tempBoard.FindAvailableMoves(1).Count > 0)
             {
                 return false;
             }
