@@ -1,9 +1,9 @@
 ﻿using System;
-using Virus;
+
 
 namespace UnitTesting
 {
-    internal class TestPlayer : VirusPlayer
+    internal class TestPlayer 
     {
         public void play()
         {

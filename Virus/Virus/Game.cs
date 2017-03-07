@@ -24,13 +24,17 @@ namespace Virus
             board.SetPlayer1(player1);
             board.SetPlayer2(player2);
             int[] result = new int[2];
-            for (int i = 0; i < 200; i++)
+            for (int i = 0; i < 10; i++)
             {
                 while (!board.IsDone())
                 {
                     player1.play();
+                    board.Display();
+                    Thread.Sleep(50);
+                    
                     player2.play();
                     board.Display();
+                    Thread.Sleep(50);
                 }
                 sbyte[] result2 = board.GetScore();
                 for (int a = 0; a < result2.Count(); a++)
@@ -39,10 +43,10 @@ namespace Virus
                 }
                 board.reset();
             }
-            
+
             for (int i = 0; i < result.Count(); i++)
             {
-                Console.WriteLine("Player " + i + " points: " + result[i]);
+                Console.WriteLine("Player " + (i + 1) + " points: " + result[i]);
             }
             Console.Read();
         }

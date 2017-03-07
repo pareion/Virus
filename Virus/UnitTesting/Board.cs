@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Virus
+namespace UnitTesting
 {
     public class Board
     {
@@ -248,226 +248,15 @@ namespace Virus
             //Jump move
             if (jumping)
             {
-                for (int i = -1; i <= 1; i++)
-                {
-                    try
-                    {
-                        if (i == -1)
-                        {
-                            try
-                            {
-                                if (board[moveToHereX - 2, moveToHereY - 2] != 0 && board[moveToHereX - 2, moveToHereY - 2] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            try
-                            {
-                                if (board[moveToHereX - 2, moveToHereY] != 0 && board[moveToHereX - 2, moveToHereY] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            try
-                            {
-                                if (board[moveToHereX - 2, moveToHereY + 2] != 0 && board[moveToHereX - 2, moveToHereY + 2] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-
-                        }
-                        if (i == 0)
-                        {
-                            try
-                            {
-                                if (board[moveToHereX, moveToHereY - 2] != 0 && board[moveToHereX, moveToHereY - 2] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            try
-                            {
-                                if (board[moveToHereX, moveToHereY + 2] != 0 && board[moveToHereX, moveToHereY + 2] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                        }
-                        if (i == 1)
-                        {
-                            try
-                            {
-                                if (board[moveToHereX + 2, moveToHereY - 2] != 0 && board[moveToHereX + 2, moveToHereY - 2] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-
-                            try
-                            {
-                                if (board[moveToHereX + 2, moveToHereY] != 0 && board[moveToHereX + 2, moveToHereY] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                            try
-                            {
-                                if (board[moveToHereX + 2, moveToHereY + 2] != 0 && board[moveToHereX + 2, moveToHereY + 2] != player)
-                                {
-                                    taken++;
-                                }
-                            }
-                            catch (Exception)
-                            {
-
-                            }
-                        }
-                    }
-                    catch (Exception)
-                    {
-
-                    }
-                }
+                taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player);
+                
                 return taken;
             }
             else
             {
                 //Normal move
-                for (int i = -1; i <= 1; i++)
-                {
+                taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player);
 
-                    if (i == -1)
-                    {
-                        try
-                        {
-                            if (board[moveToHereX - 1, moveToHereY - 1] != 0 && board[moveToHereX - 1, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX - 1, moveToHereY] != 0 && board[moveToHereX - 1, moveToHereY] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX - 1, moveToHereY + 1] != 0 && board[moveToHereX - 1, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch
-                        {
-
-                        }
-                    }
-                    if (i == 0)
-                    {
-                        try
-                        {
-                            if (board[moveToHereX + 1, moveToHereY - 1] != 0 && board[moveToHereX + 1, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX + 1, moveToHereY + 1] != 0 && board[moveToHereX + 1, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-                    }
-                    if (i == 1)
-                    {
-                        try
-                        {
-                            if (board[moveToHereX + i, moveToHereY - 1] != 0 && board[moveToHereX + i, moveToHereY - 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX + i, moveToHereY] != 0 && board[moveToHereX + i, moveToHereY] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-                        try
-                        {
-                            if (board[moveToHereX + i, moveToHereY + 1] != 0 && board[moveToHereX + i, moveToHereY + 1] != player)
-                            {
-                                taken++;
-                            }
-                        }
-                        catch (Exception)
-                        {
-
-                        }
-
-
-
-                    }
-
-                }
             }
 
             return taken;
@@ -498,113 +287,115 @@ namespace Virus
             //Jump move
             if (jumping)
             {
-                try
-                {
-                    if (board[moveToHereX - 2, moveToHereY - 2] != 0 && board[moveToHereX - 2, moveToHereY - 2] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
+                taken += CapturePieces(moveToHereX, moveToHereY, player);
 
-                }
-                try
-                {
-                    if (board[moveToHereX - 2, moveToHereY] != 0 && board[moveToHereX - 2, moveToHereY] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
-                try
-                {
-                    if (board[moveToHereX - 2, moveToHereY + 2] != 0 && board[moveToHereX - 2, moveToHereY + 2] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
-
-
-                try
-                {
-                    if (board[moveToHereX, moveToHereY - 2] != 0 && board[moveToHereX, moveToHereY - 2] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
-                try
-                {
-                    if (board[moveToHereX, moveToHereY + 2] != 0 && board[moveToHereX, moveToHereY + 2] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
-
-                try
-                {
-                    if (board[moveToHereX + 2, moveToHereY - 2] != 0 && board[moveToHereX + 2, moveToHereY - 2] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
-
-                try
-                {
-                    if (board[moveToHereX + 2, moveToHereY] != 0 && board[moveToHereX + 2, moveToHereY] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
-                try
-                {
-                    if (board[moveToHereX + 2, moveToHereY + 2] != 0 && board[moveToHereX + 2, moveToHereY + 2] != player)
-                    {
-                        taken += CapturePieces(moveToHereX, moveToHereY, player);
-                    }
-                }
-                catch (Exception)
-                {
-
-                }
                 board[brickToMoveX, brickToMoveY] = 0;
-                board[moveToHereX, moveToHereY] = player;
-                return taken;
             }
             else
             {
                 //Normal move
                 taken += CapturePieces(moveToHereX, moveToHereY, player);
-                board[moveToHereX, moveToHereY] = player;
-
+                
             }
-
+            board[moveToHereX, moveToHereY] = player;
             return taken;
         }
+        private sbyte AssumeCapturedPieces(sbyte moveToHereX, sbyte moveToHereY, sbyte player)
+        {
+            sbyte taken = 0;
+            try
+            {
+                if (board[moveToHereX - 1, moveToHereY - 1] != 0 && board[moveToHereX - 1, moveToHereY - 1] != player)
+                {
+                    taken++;
+                }
 
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX, moveToHereY - 1] != 0 && board[moveToHereX, moveToHereY - 1] != player)
+                {
+                    taken++;
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX + 1, moveToHereY - 1] != 0 && board[moveToHereX + 1, moveToHereY - 1] != player)
+                {
+                    taken++;
+                }
+
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX + 1, moveToHereY] != 0 && board[moveToHereX, moveToHereY] != player)
+                {
+                    taken++;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX - 1, moveToHereY] != 0 && board[moveToHereX, moveToHereY] != player)
+                {
+                    taken++;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX + 1, moveToHereY + 1] != 0 && board[moveToHereX + 1, moveToHereY + 1] != player)
+                {
+                    taken++;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX, moveToHereY + 1] != 0 && board[moveToHereX, moveToHereY + 1] != player)
+                {
+                    taken++;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            try
+            {
+                if (board[moveToHereX - 1, moveToHereY + 1] != 0 && board[moveToHereX - 1, moveToHereY + 1] != player)
+                {
+                    taken++;
+                }
+            }
+            catch (Exception)
+            {
+
+            }
+            return taken;
+        }
         private sbyte CapturePieces(sbyte moveToHereX, sbyte moveToHereY, sbyte player)
         {
             sbyte taken = 0;

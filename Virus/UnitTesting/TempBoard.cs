@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Virus;
+
 
 namespace UnitTesting
 {
@@ -16,7 +16,8 @@ namespace UnitTesting
         }
         public void SetupBoardForCapture()
         {
-            board[6, 3] = 1;
+            board[6, 4] = 1;
+            board[6, 5] = 2;
             board[5, 5] = 2;
             board[5, 6] = 2;
             board[5, 7] = 2;
@@ -28,7 +29,7 @@ namespace UnitTesting
         public override sbyte MoveBrick(sbyte brickToMoveX, sbyte brickToMoveY, sbyte moveToHereX, sbyte moveToHereY)
         {
             if (playerTurnsOn == false)
-            {                
+            {
                 return Move(playerTurn,brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
             }
             else

@@ -20,7 +20,7 @@ namespace Virus
         public MiniMaxComputer(Board board, sbyte playerNumber)
         {
             counter = 0;
-            maxcounter = 2;
+            maxcounter = 30;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -145,11 +145,11 @@ namespace Virus
                 {
                     if (tempBoard.board[x, y] == 1)
                     {
-                        points += 2;
+                        points += 1;
                     }
                     if (tempBoard.board[x, y] == 2)
                     {
-                        points -= 2;
+                        points -= 1;
                     }
                 }
             }
@@ -206,11 +206,18 @@ namespace Virus
                         if (result != -1)
                         {
                             Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x2, toY = y2, moveValue = result };
-                            if (!moves.Contains(curnMove))
+                            bool exists = false;
+                            foreach (var item in moves)
+                            {
+                                if (item.toX == curnMove.toX && item.toY == curnMove.toY)
+                                {
+                                    exists = true;
+                                }
+                            }
+                            if (!exists)
                             {
                                 moves.Add(curnMove);
                             }
-
                         }
                     }
                 }
@@ -233,7 +240,15 @@ namespace Virus
                         if (result != -1)
                         {
                             Move curnMove = new Move() { fromX = bricks[i].Item2, fromY = bricks[i].Item3, toX = x3, toY = y3, moveValue = result };
-                            if (!moves.Contains(curnMove))
+                            bool exists = false;
+                            foreach (var item in moves)
+                            {
+                                if (item.toX == curnMove.toX && item.toY == curnMove.toY)
+                                {
+                                    exists = true;
+                                }
+                            }
+                            if (!exists)
                             {
                                 moves.Add(curnMove);
                             }
