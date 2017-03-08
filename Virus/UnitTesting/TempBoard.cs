@@ -13,6 +13,7 @@ namespace UnitTesting
         public TempBoard(int size) : base(size)
         {
             board[3, 3] = 1;
+            board[0, 3] = 1;
         }
         public void SetupBoardForCapture()
         {

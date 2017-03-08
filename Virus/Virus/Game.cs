@@ -17,58 +17,33 @@ namespace Virus
         }
         public void StartGame()
         {
-            PlayGame(11);
-            MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
-            SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
-           // RandomComputer player2 = new RandomComputer(board, 2);
+            for (int a = 3; a < 12; a++)
+            {
+                PlayGame(a);
+                MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
+                SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
 
-            int[] result = new int[2];
-            for (int i = 0; i < 15; i++)
-            {
-                while (!board.IsDone())
+                int[] result = new int[2];
+                for (int i = 0; i < 15; i++)
                 {
-                    player1.play();
-                    /*board.Display();
-                    Thread.Sleep(1000);*/
-                    player2.play();
-                    board.Display();
-                    //Thread.Sleep(1000);
+                    while (!board.IsDone())
+                    {
+                        player1.play();
+                        player2.play();
+                        board.Display();
+                    }
+                    int[] result2 = board.GetScore();
+                    for (int b = 0; b < result2.Count(); b++)
+                    {
+                        result[b] += result2[b];
+                    }
+                    board.reset();
                 }
-                int[] result2 = board.GetScore();
-                for (int a = 0; a < result2.Count(); a++)
+                for (int i = 0; i < result.Count(); i++)
                 {
-                    result[a] += result2[a];
+                    Console.WriteLine("Gameboard : "+a+" Player " + (i + 1) + " points: " + result[i]);
                 }
-                board.reset();
             }
-            for (int i = 0; i < result.Count(); i++)
-            {
-                Console.WriteLine("Player " + (i + 1) + " points: " + result[i]);
-            }
-           /* result = new int[2];
-            MiniMaxComputer player3 = new MiniMaxComputer(board, 1);
-            SemiSmartComputer player4 = new SemiSmartComputer(board, 2);
-            for (int i = 0; i < 10; i++)
-            {
-                while (!board.IsDone())
-                {
-                    player3.play();
-                    player4.play();
-                    board.Display();
-                }
-                int[] result2 = board.GetScore();
-                for (int a = 0; a < result2.Count(); a++)
-                {
-                    result[a] += result2[a];
-                }
-                board.reset();
-            }
-
-            for (int i = 0; i < result.Count(); i++)
-            {
-                Console.WriteLine("Player " + (i + 1) + " points: " + result[i]);
-            }
-            Console.Read();*/
         }
     }
 }

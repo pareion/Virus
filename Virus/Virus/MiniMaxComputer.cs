@@ -11,16 +11,16 @@ namespace Virus
         Board board;
         private int counter, maxcounter;
         private Board tempBoard, previousBoard;
-        private float alpha = int.MinValue, beta = int.MaxValue;
+        private int alpha = int.MinValue, beta = int.MaxValue;
         bool done = false;
-        float bestScoreMin;
-        float bestScoreMax;
+        int bestScoreMin;
+        int bestScoreMax;
         int playerNumber;
 
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 5;
+            maxcounter = 150;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -34,8 +34,8 @@ namespace Virus
             try
             {
             Move bestMove = null;
-            float bestScore = -9999;
-            float minscore;
+            int bestScore = -9999;
+            int minscore;
             counter = 0;
             // find bricks you can use
             List<Move> moves2 = board.FindAvailableMoves(playerNumber);
@@ -76,7 +76,7 @@ namespace Virus
             }
 
         }
-        private float MIN()
+        private int MIN()
         {
             if (isGameOverHuman())
                 return -9999;
@@ -96,7 +96,7 @@ namespace Virus
                     {
                         previousBoard = tempBoard.Copy();
                         tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
-                        float score = MAX();
+                        int score = MAX();
                         beta = score;
 
                         if (beta <= alpha)
@@ -104,7 +104,7 @@ namespace Virus
                             done = true;
                             goto done;
                         }
-                        if (score < bestScoreMin)
+                        if (score <= bestScoreMin)
                         {
                             bestScoreMin = score;
                         }
@@ -114,7 +114,7 @@ namespace Virus
                 return bestScoreMin;
             }
         }
-        private float MAX()
+        private int MAX()
         {
             if (isGameOverComputer())
                 return 9999;
@@ -135,7 +135,7 @@ namespace Virus
                     {
                         previousBoard = tempBoard.Copy();
                         tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
-                        float score = MIN();
+                        int score = MIN();
                         beta = score;
 
                         if (beta <= alpha)
@@ -143,7 +143,7 @@ namespace Virus
                             done = true;
                             goto done;
                         }
-                        if (score > bestScoreMax)
+                        if (score >= bestScoreMax)
                         {
                             bestScoreMax = score;
                         }
@@ -154,9 +154,9 @@ namespace Virus
             }
         }
 
-        private float EVAL()
+        private int EVAL()
         {
-            float points = 0;
+            int points = 0;
             for (int x = 0; x < tempBoard.boardSize; x++)
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)

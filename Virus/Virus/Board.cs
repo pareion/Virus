@@ -55,11 +55,7 @@ namespace Virus
         internal void reset()
         {
             board = new int[boardSize, boardSize];
-            board[0, 0] = 1;
-            board[boardSize - 1, boardSize - 1] = 1;
-            board[boardSize - 1, 0] = 2;
-            board[0, boardSize - 1] = 2;
-            playerTurn = 1;
+            StartGame();
         }
         public bool IsDone()
         {
@@ -129,7 +125,6 @@ namespace Virus
         {
             List<Tuple<int, int, int>> bricks = GetBricks(playerNumber);
             List<Move> moves = new List<Move>();
-            int player = playerNumber;
             for (int i = 0; i < bricks.Count; i++)
             {
                 for (int x = -1; x <= 1; x++)
@@ -593,7 +588,7 @@ namespace Virus
 
         private bool IsNormalMoveEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
-            if (brickToMoveX - moveToHereX == 1 || -1 == brickToMoveX - moveToHereX && brickToMoveY - moveToHereY == 1 || brickToMoveY - moveToHereY == -1)
+            if (brickToMoveX - moveToHereX == 1 || -1 == brickToMoveX - moveToHereX || 0 == brickToMoveX - moveToHereX && brickToMoveY - moveToHereY == 0 || brickToMoveY - moveToHereY == 1 || brickToMoveY - moveToHereY == -1)
             {
                 return true;
             }
@@ -602,14 +597,10 @@ namespace Virus
 
         private bool IsJumpEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
-            if (brickToMoveX - moveToHereX == 0 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == 0 && brickToMoveY - moveToHereY == -2)
+            if (brickToMoveX - moveToHereX == 2 || -2 == brickToMoveX - moveToHereX || 0 == brickToMoveX - moveToHereX && brickToMoveY - moveToHereY == 0 || brickToMoveY - moveToHereY == 2 || brickToMoveY - moveToHereY == -2)
+            {
                 return true;
-            else if (brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY == -2)
-                return true;
-            else if (brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY == 2 || brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY == -2)
-                return true;
-            else if (brickToMoveX - moveToHereX == 2 && brickToMoveY - moveToHereY == 0 || brickToMoveX - moveToHereX == -2 && brickToMoveY - moveToHereY == 0)
-                return true;
+            }
             return false;
         }
 
