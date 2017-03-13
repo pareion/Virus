@@ -17,20 +17,19 @@ namespace Virus
         }
         public void StartGame()
         {
-            for (int a = 3; a < 12; a++)
+            for (int a = 3; a < 15; a++)
             {
                 PlayGame(a);
                 MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
                 SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
 
                 int[] result = new int[2];
-                for (int i = 0; i < 15; i++)
+                for (int i = 0; i < 5; i++)
                 {
                     while (!board.IsDone())
                     {
                         player1.play();
                         player2.play();
-                        board.Display();
                     }
                     int[] result2 = board.GetScore();
                     for (int b = 0; b < result2.Count(); b++)

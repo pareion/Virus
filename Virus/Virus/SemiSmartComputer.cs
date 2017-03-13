@@ -24,7 +24,7 @@ namespace Virus
                 Move bestMove = result[0];
                 for (int i = 1; i < result.Count(); i++)
                 {
-                    if (bestMove.moveValue < result[i].moveValue)
+                    if (bestMove.moveValue < (result[i].moveValue + rng.Next(3)))
                     {
                         bestMove = result[i];
                     }

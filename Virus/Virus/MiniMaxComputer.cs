@@ -20,7 +20,7 @@ namespace Virus
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 150;
+            maxcounter = 15;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -136,7 +136,7 @@ namespace Virus
                         previousBoard = tempBoard.Copy();
                         tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
                         int score = MIN();
-                        beta = score;
+                        alpha = score;
 
                         if (beta <= alpha)
                         {
