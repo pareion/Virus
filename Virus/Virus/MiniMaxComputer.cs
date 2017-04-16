@@ -20,7 +20,7 @@ namespace Virus
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 15;
+            maxcounter = 5;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -33,33 +33,20 @@ namespace Virus
         {
             try
             {
-            Move bestMove = null;
-            int bestScore = -9999;
-            int minscore;
-            counter = 0;
-            // find bricks you can use
-            List<Move> moves2 = board.FindAvailableMoves(playerNumber);
-            List<Move> moves = new List<Move>();
-            Move curn = moves2[0];
-            foreach (var item in moves2)
-            {
-                if (item.moveValue > curn.moveValue)
-                {
-                    moves.Add(item);
-                    curn = item;
-                }
-            }
-            if (curn.Equals(moves2[0]))
-            {
-                moves.Add(curn);
-            }
-                bestMove = moves[0];
+                Move bestMove = null;
+                int bestScore = -9999;
+                int minscore;
+                counter = 0;
+                // find bricks you can use
+                List<Move> moves = board.FindAvailableMoves(playerNumber);
+
                 if (moves != null)
                     for (int b = 0; b < moves.Count; b++)
                     {
+                        
                         tempBoard = board.Copy();
-                        tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                        minscore = MIN();
+                        
+                        minscore = MIN()+ tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY); ;
                         if (minscore > bestScore)
                         {
                             bestMove = moves[b];
@@ -67,6 +54,7 @@ namespace Virus
                         }
                         this.counter = 0;
                         maxcounter = 0;
+
                     }
                 board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
             }
@@ -79,24 +67,22 @@ namespace Virus
         private int MIN()
         {
             if (isGameOverHuman())
-                return -9999;
+                return int.MinValue;
             else if (maxDepth())
                 return EVAL();
             else
             {
                 bestScoreMin = 9999;
                 done = false;
-            done: if (!done)
+                done: if (!done)
                 {
-                    List<Move> moves;
-                 
-                        moves = tempBoard.FindAvailableMoves(1);
+                    List<Move> moves = tempBoard.FindAvailableMoves(1);
 
                     foreach (var item in moves)
                     {
                         previousBoard = tempBoard.Copy();
-                        tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
-                        int score = MAX();
+
+                        int score = MAX() + tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY); ;
                         beta = score;
 
                         if (beta <= alpha)
@@ -117,7 +103,7 @@ namespace Virus
         private int MAX()
         {
             if (isGameOverComputer())
-                return 9999;
+                return int.MaxValue;
             else if (maxDepth())
             {
                 return EVAL();
@@ -126,16 +112,15 @@ namespace Virus
             {
                 bestScoreMax = -9999;
                 done = false;
-            done: if (!done)
+                done: if (!done)
                 {
-                    List<Move> moves;
-                        moves = tempBoard.FindAvailableMoves(2);
+                    List<Move> moves = tempBoard.FindAvailableMoves(2);
 
                     foreach (var item in moves)
                     {
                         previousBoard = tempBoard.Copy();
-                        tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
-                        int score = MIN();
+
+                        int score = MIN() + tempBoard.MoveBrick(item.fromX, item.fromY, item.toX, item.toY);
                         alpha = score;
 
                         if (beta <= alpha)

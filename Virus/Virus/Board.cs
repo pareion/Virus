@@ -166,17 +166,9 @@ namespace Virus
                 {
                     for (int y2 = -2; y2 < 3; y2 = y2 + 2)
                     {
-                        int x3 = -1;
-                        int y3 = -1;
-                        if (x2 > bricks[i].Item2)
-                            x3 = (x2 - bricks[i].Item2);
-                        else
-                            x3 = (bricks[i].Item2 - x2);
-                        if (y2 > bricks[i].Item3)
-                            y3 = (y2 - bricks[i].Item3);
-                        else
-                            y3 = (bricks[i].Item3 - y2);
-
+                        int x3 = bricks[i].Item2 - x2;
+                        int y3 = bricks[i].Item3 - y2;
+                    
                         int result = TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x3, y3);
                         if (result != -1)
                         {
@@ -203,7 +195,14 @@ namespace Virus
 
         private bool CantMove()
         {
-            foreach (var item in GetBricks(playerTurn))
+            
+            if (FindAvailableMoves(playerTurn).Count > 0)
+            {
+                return false;
+            }
+            return true;
+            /*List<Tuple<int,int,int>> list = GetBricks(playerTurn);
+            foreach (var item in list)
             {
 
                 for (int x = -1; x <= 1; x++)
@@ -229,7 +228,7 @@ namespace Virus
                     }
                 }
             }
-            return true;
+            return true;*/
         }
 
         /// <summary>
