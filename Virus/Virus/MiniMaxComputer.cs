@@ -1,8 +1,7 @@
-﻿using System;
+﻿using Neo4jClient;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Virus
 {
@@ -17,19 +16,45 @@ namespace Virus
         int bestScoreMax;
         int playerNumber;
         Node root;
-
+        List<Node> pointsVisistedBFS;
+        GraphClient client;
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 3;
+            maxcounter = 10;
             this.board = board;
             this.playerNumber = playerNumber;
         }
         public void play()
         {
+            /*client = new GraphClient(new Uri("http://localhost:32772/db/data"), "neo4j", "root");
+            client.Connect();*/
             MiniMax(board);
         }
-
+       /* private void BFS(Node start)
+        {
+            Queue queue = new Queue();
+            pointsVisistedBFS = new List<Node>();
+            pointsVisistedBFS.Add(start);
+            queue.Enqueue(start);
+            while (queue.Count != 0)
+            {
+                Node visiting = (Node)queue.Dequeue();
+                for (int i = 0; i < visiting.children.Count; i++)
+                {
+                    try
+                    {
+                        client.Create<Node>(root, root.children[i] , root.children[i]);
+                        queue.Enqueue(visiting.children[i]);
+                    }
+                    catch (Exception e)
+                    {
+                        
+                    }
+                    
+                }
+            }
+        }*/
         private void MiniMax(Board board)
         {
             try
@@ -42,12 +67,13 @@ namespace Virus
                 List<Move> moves = board.FindAvailableMoves(playerNumber);
                 root = new Node();
                 if (moves != null)
-
+                {
                     for (int b = 0; b < moves.Count; b++)
                     {
                         tempBoard = board.Copy();
                         Node tmp = new Node();
-                        minscore = MIN(tmp) + tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        minscore = MIN(tmp);
+                        tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
                         tmp.value = minscore;
                         root.children.Add(tmp);
                         if (minscore > bestScore)
@@ -57,9 +83,20 @@ namespace Virus
                         }
                         counter = 0;
                     }
-                board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+                }
+                if (bestMove == null)
+                {
+                    bestMove = moves[0];
+                    board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+                }
+                else
+                {
+                    board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+                }
+                
+                //BFS(root);
             }
-            catch (Exception)
+            catch (Exception e)
             {
 
             }
@@ -68,38 +105,47 @@ namespace Virus
         private int MIN(Node tmp)
         {
             counter++;
-            if (isGameOverHuman())
-                return int.MinValue;
-            else if (maxDepth())
+            if (maxDepth())
                 return EVAL();
             else
             {
-                bestScoreMin = 9999;
-                done = false;
-                done: if (!done)
+                try
                 {
-                    List<Move> moves = tempBoard.FindAvailableMoves(1);
-
-                    for (int i = 0; i < moves.Count; i++)
+                    bestScoreMin = 9999;
+                    done = false;
+                    done: if (!done)
                     {
-                        previousBoard = tempBoard.Copy();
-                        Node temp = new Node();
-                        tmp.children.Add(temp);
-                        int score = MAX(tmp.children[i]) + tempBoard.MoveBrick(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
-                        beta = score;
-                        tmp.children[i].value = score;
-                        if (beta <= alpha)
+                        List<Move> moves = tempBoard.FindAvailableMoves(2);
+
+                        for (int i = 0; i < moves.Count; i++)
                         {
-                            done = true;
-                            goto done;
+                            previousBoard = tempBoard.Copy();
+                            Node temp = new Node();
+
+                            tempBoard.MoveBrick(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
+                            int score = MAX(temp);
+                            beta = score;
+                            /*if (beta <= alpha)
+                            {
+                                done = true;
+                                goto done;
+                            }*/
+                            temp.value = score;
+                            tmp.children.Add(temp);
+
+                            if (score < bestScoreMin)
+                            {
+                                bestScoreMin = score;
+                            }
+                            tempBoard = previousBoard;
+
                         }
-                        if (score <= bestScoreMin)
-                        {
-                            bestScoreMin = score;
-                        }
-                        tempBoard = previousBoard.Copy();
-                        counter--;
                     }
+                    counter--;
+                }
+                catch (Exception e)
+                {
+                    
                 }
                 return bestScoreMin;
             }
@@ -107,46 +153,57 @@ namespace Virus
         private int MAX(Node tmp)
         {
             counter++;
-            if (isGameOverComputer())
-                return int.MaxValue;
-            else if (maxDepth())
+            if (maxDepth())
             {
                 return EVAL();
             }
             else
             {
-                bestScoreMax = -9999;
-                done = false;
-                done: if (!done)
+                try
                 {
-                    List<Move> moves = tempBoard.FindAvailableMoves(2);
-
-                    for (int i = 0; i < moves.Count; i++)
+                    bestScoreMax = -9999;
+                    done = false;
+                    done: if (!done)
                     {
-                        previousBoard = tempBoard.Copy();
-                        Node temp = new Node();
-                        tmp.children.Add(temp);
-                        int score = MIN(tmp.children[i]) + tempBoard.MoveBrick(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
-                        alpha = score;
-                        tmp.children[i].value = score;
-                        if (beta <= alpha)
-                        {
-                            done = true;
-                            goto done;
-                        }
-                        if (score >= bestScoreMax)
-                        {
-                            bestScoreMax = score;
-                        }
-                        tempBoard = previousBoard.Copy();
-                        counter--;
-                    }
+                        List<Move> moves = tempBoard.FindAvailableMoves(1);
 
+                        for (int i = 0; i < moves.Count; i++)
+                        {
+                            previousBoard = tempBoard.Copy();
+                            Node temp = new Node();
+
+
+                            tempBoard.MoveBrick(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
+                            int score = MIN(temp);
+                            alpha = score;
+
+                            /*if (beta <= alpha)
+                            {
+                                done = true;
+                                goto done;
+                            }*/
+                            temp.value = score;
+                            tmp.children.Add(temp);
+
+                            if (score > bestScoreMax)
+                            {
+                                bestScoreMax = score;
+                            }
+                            tempBoard = previousBoard;
+
+                        }
+
+                    }
+                    counter--;
+                    
                 }
-                return bestScoreMin;
+                catch (Exception e )
+                {
+                    
+                }
+                return bestScoreMax;
             }
         }
-
         private int EVAL()
         {
             int points = 0;
@@ -154,21 +211,18 @@ namespace Virus
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)
                 {
-                    if (tempBoard.board[x, y] == playerNumber)
+                    if (tempBoard.board[x, y] == 1)
                     {
-                        points += 1;
+                        points = points - 1;
                     }
-                    if (tempBoard.board[x, y] != playerNumber)
+                    if (tempBoard.board[x, y] == 2)
                     {
-                        points -= 1;
+                        points = points + 1;
                     }
                 }
             }
-
-
             return points;
         }
-
         private bool maxDepth()
         {
             if (counter >= maxcounter)
@@ -181,7 +235,6 @@ namespace Virus
             }
 
         }
-
         private bool isGameOverHuman()
         {
             if (tempBoard.FindAvailableMoves(1).Count > 0)
@@ -198,10 +251,17 @@ namespace Virus
             }
             return true;
         }
-        private class Node
+        private class Node 
         {
             public List<Node> children = new List<Node>();
             public int value = 0;
         }
+       /* private class RelationNode : Relationship, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
+        {
+            public int parent;
+            public int child;
+
+            public override string RelationshipTypeKey => throw new NotImplementedException();
+        }*/
     }
 }
