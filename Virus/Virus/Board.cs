@@ -93,6 +93,10 @@ namespace Virus
         /// <returns></returns>
         public virtual int MoveBrick(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
+            if (board[brickToMoveX,brickToMoveY] != playerTurn)
+            {
+                return -1;
+            }
             int move = Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
 
             if (move != -1)
@@ -117,9 +121,11 @@ namespace Virus
                     }
                 }
             }
-
-
             return move;
+        }
+        public virtual int Move(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
+        {
+            return Move(playerTurn, brickToMoveX, brickToMoveY, moveToHereX, moveToHereY);
         }
         public List<Move> FindAvailableMoves(int playerNumber)
         {
@@ -320,7 +326,7 @@ namespace Virus
             else
             {
                 //Normal move
-                taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player) + 1;
+                taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player);
 
             }
 
@@ -343,7 +349,7 @@ namespace Virus
             return true;
         }
 
-        private int MakeMove(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
+        public int MakeMove(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             int player = board[brickToMoveX, brickToMoveY];
 
@@ -570,7 +576,7 @@ namespace Virus
             return taken;
         }
 
-        private bool IsMoveEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
+        public bool IsMoveEligable(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
             if (IsJumpEligable(brickToMoveX, brickToMoveY, moveToHereX, moveToHereY))
             {
@@ -621,8 +627,15 @@ namespace Virus
 
         public Board Copy()
         {
-            var serialized = JsonConvert.SerializeObject(this);
-            return JsonConvert.DeserializeObject<Board>(serialized);
+            Board board = new Board(boardSize);
+            for (int x = 0; x < boardSize; x++)
+            {
+                for (int y = 0; y < boardSize; y++)
+                {
+                    board.board[x, y] = this.board[x, y];
+                }
+            }
+            return board;
         }
     }
 }

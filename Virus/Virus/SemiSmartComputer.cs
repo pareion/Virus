@@ -22,7 +22,7 @@ namespace Virus
             if (result.Count > 0)
             {
                 Move bestMove = result[0];
-                for (int i = 1; i < result.Count(); i++)
+                for (int i = 0; i < result.Count(); i++)
                 {
                     if (bestMove.moveValue < (result[i].moveValue))
                     {
@@ -30,6 +30,7 @@ namespace Virus
                     }
                 }
                 board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+                Console.WriteLine("Moving " + bestMove.fromX + " " + bestMove.fromY + " to: " + bestMove.toX + " " + bestMove.toY);
             }
             else
             {

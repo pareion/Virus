@@ -9,11 +9,8 @@ namespace Virus
     {
         Board board;
         private int counter, maxcounter;
-        private Board tempBoard, previousBoard;
         private int alpha = int.MinValue, beta = int.MaxValue;
         bool done = false;
-        int bestScoreMin;
-        int bestScoreMax;
         int playerNumber;
         Node root;
         List<Node> pointsVisistedBFS;
@@ -21,7 +18,7 @@ namespace Virus
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 10;
+            maxcounter = 3;
             this.board = board;
             this.playerNumber = playerNumber;
         }
@@ -31,57 +28,59 @@ namespace Virus
             client.Connect();*/
             MiniMax(board);
         }
-       /* private void BFS(Node start)
-        {
-            Queue queue = new Queue();
-            pointsVisistedBFS = new List<Node>();
-            pointsVisistedBFS.Add(start);
-            queue.Enqueue(start);
-            while (queue.Count != 0)
-            {
-                Node visiting = (Node)queue.Dequeue();
-                for (int i = 0; i < visiting.children.Count; i++)
-                {
-                    try
-                    {
-                        client.Create<Node>(root, root.children[i] , root.children[i]);
-                        queue.Enqueue(visiting.children[i]);
-                    }
-                    catch (Exception e)
-                    {
-                        
-                    }
-                    
-                }
-            }
-        }*/
+        /* private void BFS(Node start)
+         {
+             Queue queue = new Queue();
+             pointsVisistedBFS = new List<Node>();
+             pointsVisistedBFS.Add(start);
+             queue.Enqueue(start);
+             while (queue.Count != 0)
+             {
+                 Node visiting = (Node)queue.Dequeue();
+                 for (int i = 0; i < visiting.children.Count; i++)
+                 {
+                     try
+                     {
+                         client.Create<Node>(root, root.children[i] , root.children[i]);
+                         queue.Enqueue(visiting.children[i]);
+                     }
+                     catch (Exception e)
+                     {
+
+                     }
+
+                 }
+             }
+         }*/
         private void MiniMax(Board board)
         {
             try
             {
                 Move bestMove = null;
-                int bestScore = -9999;
+                int bestScorer = 9999;
                 int minscore;
-                counter = 0;
                 // find bricks you can use
-                List<Move> moves = board.FindAvailableMoves(playerNumber);
+                List<Move> moves = board.FindAvailableMoves(1);
                 root = new Node();
                 if (moves != null)
                 {
+                    Board tempBoard;
                     for (int b = 0; b < moves.Count; b++)
                     {
                         tempBoard = board.Copy();
                         Node tmp = new Node();
-                        minscore = MIN(tmp);
-                        tempBoard.MoveBrick(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        counter++;
+                        tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        int a = tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        minscore = MIN(tmp, tempBoard);
                         tmp.value = minscore;
                         root.children.Add(tmp);
-                        if (minscore > bestScore)
+                        if (minscore < bestScorer)
                         {
                             bestMove = moves[b];
-                            bestScore = minscore;
+                            bestScorer = minscore;
                         }
-                        counter = 0;
+                        counter--;
                     }
                 }
                 if (bestMove == null)
@@ -93,7 +92,7 @@ namespace Virus
                 {
                     board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
                 }
-                
+                Console.WriteLine("Moving "+ bestMove.fromX + " " +bestMove.fromY+ " to: " + bestMove.toX+ " "+ bestMove.toY);
                 //BFS(root);
             }
             catch (Exception e)
@@ -102,109 +101,130 @@ namespace Virus
             }
 
         }
-        private int MIN(Node tmp)
+        private int MIN(Node tmp, Board tempBoard)
         {
-            counter++;
-            if (maxDepth())
-                return EVAL();
+
+            if (GameEnded(tempBoard))
+            {
+                return EvalEnding(tempBoard);
+            }
+            else if (maxDepth())
+                return EVAL(tempBoard);
             else
             {
-                try
+                int bestScore = 999;
+
+                /* done = false;
+                 done: if (!done)
+                 {*/
+                List<Move> moves = tempBoard.FindAvailableMoves(2);
+                Board previousBoard = tempBoard.Copy();
+                for (int i = 0; i < moves.Count; i++)
                 {
-                    bestScoreMin = 9999;
-                    done = false;
-                    done: if (!done)
-                    {
-                        List<Move> moves = tempBoard.FindAvailableMoves(2);
+                    Node temp = new Node();
 
-                        for (int i = 0; i < moves.Count; i++)
-                        {
-                            previousBoard = tempBoard.Copy();
-                            Node temp = new Node();
-
-                            tempBoard.MoveBrick(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
-                            int score = MAX(temp);
-                            beta = score;
-                            /*if (beta <= alpha)
-                            {
-                                done = true;
-                                goto done;
-                            }*/
-                            temp.value = score;
-                            tmp.children.Add(temp);
-
-                            if (score < bestScoreMin)
-                            {
-                                bestScoreMin = score;
-                            }
-                            tempBoard = previousBoard;
-
-                        }
-                    }
+                    tempBoard.IsMoveEligable(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
+                    tempBoard.MakeMove(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
+                    counter++;
+                    int score = MAX(temp, tempBoard);
                     counter--;
+                    beta = score;
+                    /*if (beta <= alpha)
+                    {
+                        done = true;
+                        goto done;
+                    }*/
+                    temp.value = score;
+                    tmp.children.Add(temp);
+
+                    if (score < bestScore)
+                    {
+                        bestScore = score;
+                    }
+                    tempBoard = previousBoard.Copy();
+                    //  }
                 }
-                catch (Exception e)
-                {
-                    
-                }
-                return bestScoreMin;
+                return bestScore;
             }
         }
-        private int MAX(Node tmp)
+        private int MAX(Node tmp, Board tempBoard)
         {
-            counter++;
-            if (maxDepth())
+            if (GameEnded(tempBoard))
             {
-                return EVAL();
+                return EvalEnding(tempBoard);
+            }
+            else if (maxDepth())
+            {
+                return EVAL(tempBoard);
             }
             else
             {
-                try
+                int bestScore = -999;
+
+                /*done = false;
+                done: if (!done)
+                {*/
+                List<Move> moves = tempBoard.FindAvailableMoves(1);
+                Board previousBoard = tempBoard.Copy();
+                for (int i = 0; i < moves.Count; i++)
                 {
-                    bestScoreMax = -9999;
-                    done = false;
-                    done: if (!done)
-                    {
-                        List<Move> moves = tempBoard.FindAvailableMoves(1);
-
-                        for (int i = 0; i < moves.Count; i++)
-                        {
-                            previousBoard = tempBoard.Copy();
-                            Node temp = new Node();
-
-
-                            tempBoard.MoveBrick(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
-                            int score = MIN(temp);
-                            alpha = score;
-
-                            /*if (beta <= alpha)
-                            {
-                                done = true;
-                                goto done;
-                            }*/
-                            temp.value = score;
-                            tmp.children.Add(temp);
-
-                            if (score > bestScoreMax)
-                            {
-                                bestScoreMax = score;
-                            }
-                            tempBoard = previousBoard;
-
-                        }
-
-                    }
+                    
+                    Node temp = new Node();
+                    tempBoard.IsMoveEligable(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
+                    tempBoard.MakeMove(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
+                    counter++;
+                    int score = MIN(temp, tempBoard);
                     counter--;
-                    
+                    alpha = score;
+
+                    /*if (beta <= alpha)
+                    {
+                        done = true;
+                        goto done;
+                    }*/
+                    temp.value = score;
+                    tmp.children.Add(temp);
+
+                    if (score > bestScore)
+                    {
+                        bestScore = score;
+                    }
+                    tempBoard = previousBoard.Copy();
+
+                    //  }
+
                 }
-                catch (Exception e )
-                {
-                    
-                }
-                return bestScoreMax;
+                
+                return bestScore;
             }
         }
-        private int EVAL()
+
+        private bool GameEnded(Board tempBoard)
+        {
+            int Cpoints = 0;
+            int Hpoints = 0;
+            for (int x = 0; x < tempBoard.boardSize; x++)
+            {
+                for (int y = 0; y < tempBoard.boardSize; y++)
+                {
+                    if (tempBoard.board[x, y] == 2)
+                    {
+                        Cpoints++;
+                    }
+                    if (tempBoard.board[x, y] == 1)
+                    {
+                        Hpoints++;
+                    }
+                }
+            }
+            if (Cpoints == 0 || Hpoints == 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        private int EVAL(Board tempBoard)
         {
             int points = 0;
             for (int x = 0; x < tempBoard.boardSize; x++)
@@ -213,11 +233,11 @@ namespace Virus
                 {
                     if (tempBoard.board[x, y] == 1)
                     {
-                        points = points - 1;
+                        points--;
                     }
-                    if (tempBoard.board[x, y] == 2)
+                    else if (tempBoard.board[x, y] == 2)
                     {
-                        points = points + 1;
+                        points++;
                     }
                 }
             }
@@ -235,33 +255,46 @@ namespace Virus
             }
 
         }
-        private bool isGameOverHuman()
+        private int EvalEnding(Board tempBoard)
         {
-            if (tempBoard.FindAvailableMoves(1).Count > 0)
+            int humanPoints = 0;
+            int computerPoints = 0;
+            for (int x = 0; x < tempBoard.boardSize; x++)
             {
-                return false;
+                for (int y = 0; y < tempBoard.boardSize; y++)
+                {
+                    if (tempBoard.board[x, y] == 1)
+                    {
+                        humanPoints++;
+                    }
+                    else if (tempBoard.board[x, y] == 2)
+                    {
+                        computerPoints++;
+                    }
+                }
             }
-            return true;
-        }
-        private bool isGameOverComputer()
-        {
-            if (tempBoard.FindAvailableMoves(2).Count > 0)
+            if (humanPoints > computerPoints)
             {
-                return false;
+                return -9999;
             }
-            return true;
+            else if (computerPoints > humanPoints)
+            {
+                return 9999;
+            }
+
+            return 0;
         }
-        private class Node 
+        private class Node
         {
             public List<Node> children = new List<Node>();
             public int value = 0;
         }
-       /* private class RelationNode : Relationship, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
-        {
-            public int parent;
-            public int child;
+        /* private class RelationNode : Relationship, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
+         {
+             public int parent;
+             public int child;
 
-            public override string RelationshipTypeKey => throw new NotImplementedException();
-        }*/
+             public override string RelationshipTypeKey => throw new NotImplementedException();
+         }*/
     }
 }
