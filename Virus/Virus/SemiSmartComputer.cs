@@ -30,7 +30,6 @@ namespace Virus
                     }
                 }
                 board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
-                Console.WriteLine("Moving " + bestMove.fromX + " " + bestMove.fromY + " to: " + bestMove.toX + " " + bestMove.toY);
             }
             else
             {

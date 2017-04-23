@@ -12,9 +12,11 @@ namespace Virus
     {
         public int[,] board;
         public int boardSize { get; set; }
-
+        int bricks = 0;
+        int lastTime = 0;
         public int playerTurn;
         public bool jumping = false;
+        int roundWithoutChange = 0;
         public Board(int size)
         {
             board = new int[size, size];
@@ -22,6 +24,7 @@ namespace Virus
         }
         public void StartGame()
         {
+            roundWithoutChange = 0;
             board[0, 0] = 1;
             board[boardSize - 1, boardSize - 1] = 1;
             board[boardSize - 1, 0] = 2;
@@ -59,7 +62,27 @@ namespace Virus
         }
         public bool IsDone()
         {
-            if (GetBricks().Count == boardSize * boardSize)
+            bricks = 0;
+            for (int x = 0; x < boardSize; x++)
+            {
+                for (int y = 0; y < boardSize; y++)
+                {
+                    if (board[x, y] == 1 || board[x, y] == 2)
+                    {
+                        bricks++;
+                    }
+                }
+            }
+            if (bricks > lastTime)
+            {
+                lastTime = bricks;
+                roundWithoutChange = 0;
+            }
+            else
+            {
+                roundWithoutChange++;
+            }
+            if (GetBricks().Count == boardSize * boardSize || roundWithoutChange > 20)
                 return true;
             return false;
         }

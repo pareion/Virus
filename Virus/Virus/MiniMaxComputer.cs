@@ -15,43 +15,128 @@ namespace Virus
         Node root;
         List<Node> pointsVisistedBFS;
         GraphClient client;
+        static int id;
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 3;
+            maxcounter = 2;
             this.board = board;
             this.playerNumber = playerNumber;
+            id = 0;
         }
         public void play()
         {
-            /*client = new GraphClient(new Uri("http://localhost:32772/db/data"), "neo4j", "root");
-            client.Connect();*/
+
             MiniMax(board);
         }
-        /* private void BFS(Node start)
-         {
-             Queue queue = new Queue();
-             pointsVisistedBFS = new List<Node>();
-             pointsVisistedBFS.Add(start);
-             queue.Enqueue(start);
-             while (queue.Count != 0)
-             {
-                 Node visiting = (Node)queue.Dequeue();
-                 for (int i = 0; i < visiting.children.Count; i++)
-                 {
-                     try
-                     {
-                         client.Create<Node>(root, root.children[i] , root.children[i]);
-                         queue.Enqueue(visiting.children[i]);
-                     }
-                     catch (Exception e)
-                     {
+        private class NeoNode
+        {
+            public int id;
+            public int value;
+        }
+        private void BFS(Node start)
+        {
+            IEnumerable<NeoNode> result2;
+            try
+            {
+                client = new GraphClient(new Uri("http://localhost:32769/db/data"), "neo4j", "root");
+                client.Connect();
+                Queue queue = new Queue();
+                pointsVisistedBFS = new List<Node>();
+                pointsVisistedBFS.Add(start);
+                queue.Enqueue(start);
+                IEnumerable<Node> result;
+                int cc = -1;
 
-                     }
+                NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
+                client.Cypher
+                        .Create("(node:NeoNode {node})")
+                        .WithParam("node", neoroot)
+                        .ExecuteWithoutResults();
 
-                 }
-             }
-         }*/
+                while (queue.Count != 0)
+                {
+                    Node visiting = (Node)queue.Dequeue();
+                    int u = 0;
+                    NeoNode node3 = new NeoNode { value = visiting.value, id = visiting.id };
+                    u = visiting.id;
+                    /*if (visiting.id != -1)
+                    {
+                        node3 = new NeoNode { value = visiting.value, id = visiting.id };
+                        u = visiting.id;
+                    }
+                    else
+                    {
+                        cc++;
+                        node3 = new NeoNode { value = visiting.value, id = cc };
+                        u = cc;
+                    }*/
+                    for (int i = 0; i < visiting.children.Count; i++)
+                    {
+                        Node child = visiting.children[i];
+
+                        int ddd = child.value;
+
+                        cc++;
+                        var node4 = new NeoNode { value = ddd, id = cc };
+                        child.id = cc;
+                        try
+                        {
+                            if (u != visiting.id)
+                            {
+                                client.Cypher
+                            .Create("(node:NeoNode {node})")
+                            .WithParam("node", node3)
+                            .ExecuteWithoutResults();
+                            }
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+
+                        /* client.Cypher
+                             .Create("(node:NeoNode {node2})")
+                             .WithParam("node2", node4)
+                             .ExecuteWithoutResults();
+                             */
+                        /*result2 = client.Cypher
+                           .Match("(node:NeoNode)").Return(node => node.As<NeoNode>()).Results;*/
+                        try
+                        {
+                            client.Cypher
+                           .Match("(node:NeoNode)")
+                            .Where("node.id = " + u)
+                            .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
+                           .WithParam("node4", node4)
+                           .ExecuteWithoutResults();
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+
+
+
+                        //.Create("(b:Node {{d}})")
+                        // .WithParam("c",ccc)
+                        // .Create("(a)-[:HAS]->(b)").Query.DebugQueryText);
+                        //  .Create($"(b)"+child.ToString())
+                        //  .Create("(a)-[:HASCHILD]-(b)");
+                        //IEnumerable<Node> result = client.Cypher.Match("(n:Node)").Return(n => n.As<Node>()).Results;
+                        //client.Create(visiting);
+                        //client.Create(child);
+                        //client.CreateRelationship(visiting, child);
+                        queue.Enqueue(child);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
         private void MiniMax(Board board)
         {
             try
@@ -92,8 +177,7 @@ namespace Virus
                 {
                     board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
                 }
-                Console.WriteLine("Moving "+ bestMove.fromX + " " +bestMove.fromY+ " to: " + bestMove.toX+ " "+ bestMove.toY);
-                //BFS(root);
+                BFS(root);
             }
             catch (Exception e)
             {
@@ -114,9 +198,7 @@ namespace Virus
             {
                 int bestScore = 999;
 
-                /* done = false;
-                 done: if (!done)
-                 {*/
+
                 List<Move> moves = tempBoard.FindAvailableMoves(2);
                 Board previousBoard = tempBoard.Copy();
                 for (int i = 0; i < moves.Count; i++)
@@ -128,12 +210,7 @@ namespace Virus
                     counter++;
                     int score = MAX(temp, tempBoard);
                     counter--;
-                    beta = score;
-                    /*if (beta <= alpha)
-                    {
-                        done = true;
-                        goto done;
-                    }*/
+
                     temp.value = score;
                     tmp.children.Add(temp);
 
@@ -142,7 +219,7 @@ namespace Virus
                         bestScore = score;
                     }
                     tempBoard = previousBoard.Copy();
-                    //  }
+
                 }
                 return bestScore;
             }
@@ -161,27 +238,19 @@ namespace Virus
             {
                 int bestScore = -999;
 
-                /*done = false;
-                done: if (!done)
-                {*/
+
                 List<Move> moves = tempBoard.FindAvailableMoves(1);
                 Board previousBoard = tempBoard.Copy();
                 for (int i = 0; i < moves.Count; i++)
                 {
-                    
+
                     Node temp = new Node();
                     tempBoard.IsMoveEligable(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
                     tempBoard.MakeMove(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
                     counter++;
                     int score = MIN(temp, tempBoard);
                     counter--;
-                    alpha = score;
 
-                    /*if (beta <= alpha)
-                    {
-                        done = true;
-                        goto done;
-                    }*/
                     temp.value = score;
                     tmp.children.Add(temp);
 
@@ -191,10 +260,9 @@ namespace Virus
                     }
                     tempBoard = previousBoard.Copy();
 
-                    //  }
 
                 }
-                
+
                 return bestScore;
             }
         }
@@ -284,10 +352,16 @@ namespace Virus
 
             return 0;
         }
-        private class Node
+
+        private class Node : IRelationshipAllowingParticipantNode<Node>, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
         {
             public List<Node> children = new List<Node>();
             public int value = 0;
+            public int id = -1;
+            public override string ToString()
+            {
+                return value.ToString();
+            }
         }
         /* private class RelationNode : Relationship, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
          {

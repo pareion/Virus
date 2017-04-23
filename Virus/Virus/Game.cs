@@ -17,12 +17,12 @@ namespace Virus
         }
         public void StartGame()
         {
-            for (int a = 4; a < 5; a++)
+            for (int a = 4; a < 9; a++)
             {
                 PlayGame(a);
                 MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
                 SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
-                bool visual = true;
+                bool visual = false;
                 int[] result = new int[2];
                 for (int i = 0; i < 5; i++)
                 {
@@ -51,7 +51,6 @@ namespace Virus
                 {
                     Console.WriteLine("Gameboard : " + a + " Player " + (i + 1) + " points: " + result[i]);
                 }
-                Thread.Sleep(5000);
             }
         }
     }
