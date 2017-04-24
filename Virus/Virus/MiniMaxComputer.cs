@@ -37,104 +37,69 @@ namespace Virus
         private void BFS(Node start)
         {
             IEnumerable<NeoNode> result2;
-            try
+
+            client = new GraphClient(new Uri("http://localhost:32769/db/data"), "neo4j", "root");
+            client.Connect();
+            Queue queue = new Queue();
+            pointsVisistedBFS = new List<Node>();
+            pointsVisistedBFS.Add(start);
+            queue.Enqueue(start);
+            IEnumerable<Node> result;
+            int cc = -1;
+
+            NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
+            client.Cypher
+                    .Create("(node:NeoNode {node})")
+                    .WithParam("node", neoroot)
+                    .ExecuteWithoutResults();
+
+            while (queue.Count != 0)
             {
-                client = new GraphClient(new Uri("http://localhost:32769/db/data"), "neo4j", "root");
-                client.Connect();
-                Queue queue = new Queue();
-                pointsVisistedBFS = new List<Node>();
-                pointsVisistedBFS.Add(start);
-                queue.Enqueue(start);
-                IEnumerable<Node> result;
-                int cc = -1;
+                Node visiting = (Node)queue.Dequeue();
+                int u = 0;
+                NeoNode node3 = new NeoNode { value = visiting.value, id = visiting.id };
+                u = visiting.id;
 
-                NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
-                client.Cypher
-                        .Create("(node:NeoNode {node})")
-                        .WithParam("node", neoroot)
-                        .ExecuteWithoutResults();
-
-                while (queue.Count != 0)
+                for (int i = 0; i < visiting.children.Count; i++)
                 {
-                    Node visiting = (Node)queue.Dequeue();
-                    int u = 0;
-                    NeoNode node3 = new NeoNode { value = visiting.value, id = visiting.id };
-                    u = visiting.id;
-                    /*if (visiting.id != -1)
+                    Node child = visiting.children[i];
+
+                    int ddd = child.value;
+
+                    cc++;
+                    var node4 = new NeoNode { value = ddd, id = cc };
+                    child.id = cc;
+                    try
                     {
-                        node3 = new NeoNode { value = visiting.value, id = visiting.id };
-                        u = visiting.id;
-                    }
-                    else
-                    {
-                        cc++;
-                        node3 = new NeoNode { value = visiting.value, id = cc };
-                        u = cc;
-                    }*/
-                    for (int i = 0; i < visiting.children.Count; i++)
-                    {
-                        Node child = visiting.children[i];
-
-                        int ddd = child.value;
-
-                        cc++;
-                        var node4 = new NeoNode { value = ddd, id = cc };
-                        child.id = cc;
-                        try
-                        {
-                            if (u != visiting.id)
-                            {
-                                client.Cypher
-                            .Create("(node:NeoNode {node})")
-                            .WithParam("node", node3)
-                            .ExecuteWithoutResults();
-                            }
-                        }
-                        catch (Exception e)
-                        {
-
-                        }
-
-
-                        /* client.Cypher
-                             .Create("(node:NeoNode {node2})")
-                             .WithParam("node2", node4)
-                             .ExecuteWithoutResults();
-                             */
-                        /*result2 = client.Cypher
-                           .Match("(node:NeoNode)").Return(node => node.As<NeoNode>()).Results;*/
-                        try
+                        if (u != visiting.id)
                         {
                             client.Cypher
-                           .Match("(node:NeoNode)")
-                            .Where("node.id = " + u)
-                            .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
-                           .WithParam("node4", node4)
-                           .ExecuteWithoutResults();
+                        .Create("(node:NeoNode {node})")
+                        .WithParam("node", node3)
+                        .ExecuteWithoutResults();
                         }
-                        catch (Exception e)
-                        {
-
-                        }
-
-
-
-                        //.Create("(b:Node {{d}})")
-                        // .WithParam("c",ccc)
-                        // .Create("(a)-[:HAS]->(b)").Query.DebugQueryText);
-                        //  .Create($"(b)"+child.ToString())
-                        //  .Create("(a)-[:HASCHILD]-(b)");
-                        //IEnumerable<Node> result = client.Cypher.Match("(n:Node)").Return(n => n.As<Node>()).Results;
-                        //client.Create(visiting);
-                        //client.Create(child);
-                        //client.CreateRelationship(visiting, child);
-                        queue.Enqueue(child);
                     }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+                    try
+                    {
+                        client.Cypher
+                       .Match("(node:NeoNode)")
+                        .Where("node.id = " + u)
+                        .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
+                       .WithParam("node4", node4)
+                       .ExecuteWithoutResults();
+                    }
+                    catch (Exception e)
+                    {
+                        Console.WriteLine(e.Message);
+                    }
+
+                    queue.Enqueue(child);
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e.Message);
             }
         }
         private void MiniMax(Board board)
