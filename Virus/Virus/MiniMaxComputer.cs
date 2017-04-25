@@ -19,7 +19,7 @@ namespace Virus
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 2;
+            maxcounter = 3;
             this.board = board;
             this.playerNumber = playerNumber;
             id = 0;
@@ -38,7 +38,7 @@ namespace Virus
         {
             IEnumerable<NeoNode> result2;
 
-            client = new GraphClient(new Uri("http://localhost:32769/db/data"), "neo4j", "root");
+            client = new GraphClient(new Uri("http://localhost:7474/db/data"), "anders", "anders2");
             client.Connect();
             Queue queue = new Queue();
             pointsVisistedBFS = new List<Node>();
@@ -143,6 +143,7 @@ namespace Virus
                     board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
                 }
                 BFS(root);
+                Console.Read();
             }
             catch (Exception e)
             {
