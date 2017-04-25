@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26228.10
+VisualStudioVersion = 15.0.26403.7
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Virus", "Virus\Virus.csproj", "{1FFE1C51-5F03-4FAD-A398-EB34320AB4C3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{4E50405B-66A9-49B6-8DDC-DEEE5521B6CF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork", "MinimalRequirements\MinimalRequirements\NeuralNetwork.csproj", "{7FE6024B-8182-4B4A-BF3F-EC10468C515C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NeuralNetwork", "NeuralNetwork\NeuralNetwork\NeuralNetwork.csproj", "{7FE6024B-8182-4B4A-BF3F-EC10468C515C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
