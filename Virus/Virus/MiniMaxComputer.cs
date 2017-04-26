@@ -26,7 +26,6 @@ namespace Virus
         }
         public void play()
         {
-
             MiniMax(board);
         }
         private class NeoNode
@@ -36,15 +35,14 @@ namespace Virus
         }
         private void BFS(Node start)
         {
-            IEnumerable<NeoNode> result2;
-
             client = new GraphClient(new Uri("http://localhost:7474/db/data"), "anders", "anders2");
             client.Connect();
+
             Queue queue = new Queue();
             pointsVisistedBFS = new List<Node>();
             pointsVisistedBFS.Add(start);
             queue.Enqueue(start);
-            IEnumerable<Node> result;
+
             int cc = -1;
 
             NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
@@ -109,7 +107,7 @@ namespace Virus
                 Move bestMove = null;
                 int bestScorer = 9999;
                 int minscore;
-                // find bricks you can use
+
                 List<Move> moves = board.FindAvailableMoves(1);
                 root = new Node();
                 if (moves != null)
@@ -142,8 +140,9 @@ namespace Virus
                 {
                     board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
                 }
-                BFS(root);
-                Console.Read();
+
+                //Stores the current root in the Neo4j Database locally
+                //BFS(root);
             }
             catch (Exception e)
             {
@@ -318,7 +317,53 @@ namespace Virus
 
             return 0;
         }
+        public Tuple<Board,Move> PredictMiniMaxMove(Board tempboard)
+        {
+            Move bestMove = null;
+            try
+            {
+                int bestScorer = 9999;
+                int minscore;
 
+                List<Move> moves = tempboard.FindAvailableMoves(1);
+                root = new Node();
+                if (moves != null)
+                {
+                    Board tempBoard;
+                    for (int b = 0; b < moves.Count; b++)
+                    {
+                        tempBoard = tempboard.Copy();
+                        Node tmp = new Node();
+                        counter++;
+                        tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        int a = tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        minscore = MIN(tmp, tempBoard);
+                        tmp.value = minscore;
+                        root.children.Add(tmp);
+                        if (minscore < bestScorer)
+                        {
+                            bestMove = moves[b];
+                            bestScorer = minscore;
+                        }
+                        counter--;
+                    }
+                }
+
+                if (bestMove == null)
+                {
+                    bestMove = moves[0];
+                }
+
+                //Stores the current root in the Neo4j Database locally
+                //BFS(root);
+            }
+            catch (Exception e)
+            {
+
+            }
+            tempboard.MakeMove(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+            return new Tuple<Board, Move>(tempboard, bestMove);
+        }
         private class Node : IRelationshipAllowingParticipantNode<Node>, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
         {
             public List<Node> children = new List<Node>();
@@ -329,12 +374,5 @@ namespace Virus
                 return value.ToString();
             }
         }
-        /* private class RelationNode : Relationship, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
-         {
-             public int parent;
-             public int child;
-
-             public override string RelationshipTypeKey => throw new NotImplementedException();
-         }*/
     }
 }

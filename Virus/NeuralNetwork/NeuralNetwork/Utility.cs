@@ -12,5 +12,10 @@ namespace NeuralNetwork
         {
             return value * (1.0F - value);
         }
+        public static double SoftSigmoid(double value)
+        {
+            return value / (1 + Math.Abs(value));
+        }
     }
+    public enum ActivationFunction { SigmoidDerivative, SoftSigmoid }
 }

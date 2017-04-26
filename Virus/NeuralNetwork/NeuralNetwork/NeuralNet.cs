@@ -6,13 +6,18 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
-    class NeuralNet
+    public class NeuralNet
     {
         public NeuralLayer inputLayer;
         public NeuralLayer hiddenLayer;
         public NeuralLayer outputLayer;
+        public ActivationFunction activation;
         public double fitness;
         public int seed;
+        public NeuralNet(ActivationFunction activation)
+        {
+            this.activation = activation;
+        }
         public void Pulse()
         {
             lock (this)
@@ -37,13 +42,13 @@ namespace NeuralNetwork
             int i, j;
 
             for (i = 0; i < inputNeurons; i++)
-                inputLayer.neurons.Add(new Neuron(0));
+                inputLayer.neurons.Add(new Neuron(0, activation));
 
             for (i = 0; i < hiddenNeurons; i++)
-                hiddenLayer.neurons.Add(new Neuron(rand.NextDouble()));
+                hiddenLayer.neurons.Add(new Neuron(rand.NextDouble(), activation));
 
             for (i = 0; i < outputNeurons; i++)
-                outputLayer.neurons.Add(new Neuron(rand2.NextDouble()));
+                outputLayer.neurons.Add(new Neuron(rand2.NextDouble(), activation));
 
             //Wire input together with the hidden layer
             for (i = 0; i < hiddenLayer.neurons.Count; i++)

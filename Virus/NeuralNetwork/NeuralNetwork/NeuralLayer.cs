@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace NeuralNetwork
 {
-    class NeuralLayer
+    public class NeuralLayer
     {
         public List<Neuron> neurons = new List<Neuron>();
 

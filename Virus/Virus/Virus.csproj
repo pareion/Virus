@@ -53,6 +53,7 @@
     <Compile Include="Game.cs" />
     <Compile Include="MiniMaxComputer.cs" />
     <Compile Include="Move.cs" />
+    <Compile Include="NeuralNetworkComputer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomComputer.cs" />
@@ -64,6 +65,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\NeuralNetwork\NeuralNetwork\NeuralNetwork.csproj">
+      <Project>{7fe6024b-8182-4b4a-bf3f-ec10468c515c}</Project>
+      <Name>NeuralNetwork</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UnitTesting\UnitTesting.csproj">
       <Project>{4e50405b-66a9-49b6-8ddc-deee5521b6cf}</Project>
       <Name>UnitTesting</Name>

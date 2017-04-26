@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NeuralNetwork
 {
-    public class Neuron 
+    public class Neuron
     {
         public double bias;
         public double weight;
@@ -12,12 +12,14 @@ namespace NeuralNetwork
         public double delta;
         public double lastdelta;
         public List<Link> Input = new List<Link>();
+        public ActivationFunction activation;
 
-        public Neuron(double bias)
+        public Neuron(double bias, ActivationFunction activation)
         {
             this.bias = bias;
             delta = 0;
             lastdelta = 0;
+            this.activation = activation;
         }
 
         internal void Pulse(NeuralLayer neuralLayer)
@@ -66,7 +68,14 @@ namespace NeuralNetwork
         }
         public double ActivateFunction(double value)
         {
-            return (1 / (1 + Math.Exp(-(value))));
+            switch (activation)
+            {
+                case ActivationFunction.SigmoidDerivative:
+                    return Utility.SigmoidDerivative(value);
+                case ActivationFunction.SoftSigmoid:
+                    return Utility.SoftSigmoid(value);
+            }
+            return 0;
         }
 
     }
