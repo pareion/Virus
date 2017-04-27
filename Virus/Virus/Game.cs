@@ -22,7 +22,8 @@ namespace Virus
             for (int a = 4; a < 9; a++)
             {
                 PlayGame(a);
-                NeuralNetworkComputer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SoftSigmoid);
+                //NeuralNetworkComputer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative);
+                MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
                 SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
                 bool visual = true;
                 int[] result = new int[2];

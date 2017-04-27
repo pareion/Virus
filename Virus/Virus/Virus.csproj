@@ -54,6 +54,10 @@
     <Compile Include="MiniMaxComputer.cs" />
     <Compile Include="Move.cs" />
     <Compile Include="NeuralNetworkComputer.cs" />
+    <Compile Include="Persistance\IDB.cs" />
+    <Compile Include="Persistance\Neo4j.cs" />
+    <Compile Include="Persistance\NeoNode.cs" />
+    <Compile Include="Persistance\SQL.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RandomComputer.cs" />
@@ -73,6 +77,9 @@
       <Project>{4e50405b-66a9-49b6-8ddc-deee5521b6cf}</Project>
       <Name>UnitTesting</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Persistance\EntityFramework\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

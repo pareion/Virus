@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Virus.Persistance;
 
 namespace Virus
 {
@@ -9,34 +10,22 @@ namespace Virus
     {
         Board board;
         private int counter, maxcounter;
-        private int alpha = int.MinValue, beta = int.MaxValue;
-        bool done = false;
         int playerNumber;
         Node root;
         List<Node> pointsVisistedBFS;
-        GraphClient client;
-        static int id;
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
-            maxcounter = 3;
+            maxcounter = 2;
             this.board = board;
             this.playerNumber = playerNumber;
-            id = 0;
         }
         public void play()
         {
             MiniMax(board);
         }
-        private class NeoNode
-        {
-            public int id;
-            public int value;
-        }
         private void BFS(Node start)
         {
-            client = new GraphClient(new Uri("http://localhost:7474/db/data"), "anders", "anders2");
-            client.Connect();
 
             Queue queue = new Queue();
             pointsVisistedBFS = new List<Node>();
@@ -46,10 +35,8 @@ namespace Virus
             int cc = -1;
 
             NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
-            client.Cypher
-                    .Create("(node:NeoNode {node})")
-                    .WithParam("node", neoroot)
-                    .ExecuteWithoutResults();
+
+            Neo4j.GetClient().Create(neoroot);
 
             while (queue.Count != 0)
             {
@@ -71,10 +58,7 @@ namespace Virus
                     {
                         if (u != visiting.id)
                         {
-                            client.Cypher
-                        .Create("(node:NeoNode {node})")
-                        .WithParam("node", node3)
-                        .ExecuteWithoutResults();
+                            Neo4j.GetClient().Create(node3);
                         }
                     }
                     catch (Exception e)
@@ -84,12 +68,7 @@ namespace Virus
 
                     try
                     {
-                        client.Cypher
-                       .Match("(node:NeoNode)")
-                        .Where("node.id = " + u)
-                        .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
-                       .WithParam("node4", node4)
-                       .ExecuteWithoutResults();
+                        Neo4j.GetClient().CreateChild(u, node4);
                     }
                     catch (Exception e)
                     {
@@ -142,9 +121,9 @@ namespace Virus
                 }
 
                 //Stores the current root in the Neo4j Database locally
-                //BFS(root);
+                BFS(root);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -357,7 +336,7 @@ namespace Virus
                 //Stores the current root in the Neo4j Database locally
                 //BFS(root);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

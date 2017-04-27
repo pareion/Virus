@@ -33,7 +33,7 @@ namespace Virus
                 {
                     if (board.board[x, y] == 2)
                     {
-                        vec[count] = -1;
+                        vec[count] = 1;
                     }
                     else if (board.board[x, y] == 1)
                     {
@@ -41,7 +41,7 @@ namespace Virus
                     }
                     else
                     {
-                        vec[count + 2] = 0;
+                        vec[count + 2] = 1;
                     }
                     count = count + 3;
                 }
@@ -60,7 +60,7 @@ namespace Virus
                 {
                     if (newBoard.Item1.board[x, y] == 2)
                     {
-                        vecOutput[count] = -1;
+                        vecOutput[count] = 1;
                     }
                     else if (newBoard.Item1.board[x, y] == 1)
                     {
@@ -68,7 +68,7 @@ namespace Virus
                     }
                     else
                     {
-                        vecOutput[count + 2] = 0;
+                        vecOutput[count + 2] = 1;
                     }
                     count = count + 3;
                 }
@@ -82,7 +82,7 @@ namespace Virus
             outputN = board.boardSize * board.boardSize * 3;
 
             net.Init(3, inputN, hiddenN, outputN);
-            net.Train(input, output, 2, 1000);
+            net.Train(input, output, 2, 100);
 
             output = new double[1][];
             for (int i = 0; i < net.inputLayer.neurons.Count; i++)
@@ -94,7 +94,7 @@ namespace Virus
             //Read the neurons from the output layer and convert it to a move
             for (int i = 0; i < net.outputLayer.neurons.Count; i++)
             {
-                 
+                Console.WriteLine("Output " + i + " : " + net.outputLayer.neurons[i].Output);
             }
 
             //Make the move from the output layer
