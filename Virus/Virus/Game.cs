@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using NeuralNetwork;
+using Virus.Persistance;
 
 namespace Virus
 {
@@ -23,7 +24,7 @@ namespace Virus
             {
                 PlayGame(a);
                 //NeuralNetworkComputer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative);
-                MiniMaxComputer player1 = new MiniMaxComputer(board, 1);
+                MiniMaxComputer player1 = new MiniMaxComputer(board, 1, SQL.GetClient());
                 SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
                 bool visual = true;
                 int[] result = new int[2];

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Virus.Persistance;
 
 namespace Virus
 {
@@ -17,7 +18,7 @@ namespace Virus
         {
             this.board = board;
             this.playerNumber = playerNumber;
-            trainer = new MiniMaxComputer(board, playerNumber);
+            trainer = new MiniMaxComputer(board, playerNumber, SQL.GetClient());
             net = new NeuralNet(activation);
         }
 

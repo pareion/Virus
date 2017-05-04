@@ -15,14 +15,16 @@ namespace Virus
         Node root;
         List<Node> pointsVisistedBFS;
         public bool storage;
+        IDB db;
 
-        public MiniMaxComputer(Board board, int playerNumber)
+        public MiniMaxComputer(Board board, int playerNumber, IDB db)
         {
             counter = 0;
             maxcounter = 2;
             this.board = board;
             this.playerNumber = playerNumber;
             storage = true;
+            this.db = db;
         }
         public void play()
         {
@@ -40,7 +42,7 @@ namespace Virus
 
             NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
 
-            Neo4j.GetClient().Create(neoroot);
+            db.Create(neoroot);
 
             while (queue.Count != 0)
             {
@@ -62,7 +64,7 @@ namespace Virus
                     {
                         if (u != visiting.id)
                         {
-                            Neo4j.GetClient().Create(node3);
+                            db.Create(node3);
                         }
                     }
                     catch (Exception e)
@@ -72,7 +74,7 @@ namespace Virus
 
                     try
                     {
-                        Neo4j.GetClient().CreateChild(u, node4);
+                        db.CreateChild(u, node4);
                     }
                     catch (Exception e)
                     {
