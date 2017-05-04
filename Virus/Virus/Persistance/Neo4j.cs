@@ -31,14 +31,24 @@ namespace Virus.Persistance
                     .WithParam("node", node)
                     .ExecuteWithoutResults();
         }
-        public void CreateChild(int id, NeoNode node)
+        public bool CreateChild(int id, NeoNode node)
         {
-            db.Cypher
+            try
+            {
+                db.Cypher
                        .Match("(node:NeoNode)")
-                        .Where("node.id = " + id)
-                        .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
+                       //.Where((NeoNode dnode) => dnode.id == id)
+                       .Where("node.id = " + id)
+                       .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
                        .WithParam("node4", node)
                        .ExecuteWithoutResults();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            
         }
     }
 }

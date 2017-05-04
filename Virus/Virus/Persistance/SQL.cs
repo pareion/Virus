@@ -9,8 +9,10 @@ namespace Virus.Persistance
     class SQL : IDB
     {
         private static SQL client = null;
+        private EntityFramework.VirusGameEntities db;
         private SQL()
         {
+            db = new EntityFramework.VirusGameEntities();
         }
         public static SQL GetClient()
         {
@@ -20,14 +22,33 @@ namespace Virus.Persistance
             }
             return client;
         }
-        public void CreateChild(int id, NeoNode node)
+        public bool CreateChild(int id, NeoNode node)
         {
-            throw new NotImplementedException();
+            EntityFramework.Node temp = new EntityFramework.Node();
+
+            temp.Id = node.id;
+            temp.Value = node.value;
+
+            EntityFramework.Node find = db.Node.First(x => x.Id == id);
+
+            if (find != null)
+            {
+                find.Node1.Add(temp);
+                db.SaveChanges();
+                return true;
+            }
+            return false;
         }
 
         public void Create(NeoNode node)
         {
-            throw new NotImplementedException();
+            EntityFramework.Node temp = new EntityFramework.Node();
+
+            temp.Id = node.id;
+            temp.Value = node.value;
+
+            db.Node.Add(temp);
+            db.SaveChanges();
         }
     }
 }

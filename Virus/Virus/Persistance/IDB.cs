@@ -9,6 +9,6 @@ namespace Virus.Persistance
     interface IDB
     {
         void Create(NeoNode node);
-        void CreateChild(int id, NeoNode node);
+        bool CreateChild(int id, NeoNode node);
     }
 }

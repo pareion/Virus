@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Virus.Persistance;
 
 namespace Virus
@@ -13,12 +14,15 @@ namespace Virus
         int playerNumber;
         Node root;
         List<Node> pointsVisistedBFS;
+        public bool storage;
+
         public MiniMaxComputer(Board board, int playerNumber)
         {
             counter = 0;
             maxcounter = 2;
             this.board = board;
             this.playerNumber = playerNumber;
+            storage = true;
         }
         public void play()
         {
@@ -121,7 +125,11 @@ namespace Virus
                 }
 
                 //Stores the current root in the Neo4j Database locally
-                BFS(root);
+                if (storage)
+                {
+                    WriteToDatabase();
+                }
+
             }
             catch (Exception)
             {
@@ -129,6 +137,16 @@ namespace Virus
             }
 
         }
+
+        private void WriteToDatabase()
+        {
+            Stopwatch watch = new Stopwatch();
+            watch.Start();
+            BFS(root);
+            watch.Stop();
+            Console.WriteLine("Time elapsed while writing to the database: "+watch.ElapsedTicks);
+        }
+
         private int MIN(Node tmp, Board tempBoard)
         {
 
@@ -296,7 +314,7 @@ namespace Virus
 
             return 0;
         }
-        public Tuple<Board,Move> PredictMiniMaxMove(Board tempboard)
+        public Tuple<Board, Move> PredictMiniMaxMove(Board tempboard)
         {
             Move bestMove = null;
             try
