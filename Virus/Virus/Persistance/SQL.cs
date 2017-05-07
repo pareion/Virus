@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace Virus.Persistance
 {
-    class SQL : IDB
+    public class SQL : IDB
     {
         private static SQL client = null;
         private EntityFramework.VirusGameEntities db;
+
         private SQL()
         {
             db = new EntityFramework.VirusGameEntities();

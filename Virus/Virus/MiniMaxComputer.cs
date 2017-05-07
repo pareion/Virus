@@ -20,7 +20,7 @@ namespace Virus
         public MiniMaxComputer(Board board, int playerNumber, IDB db)
         {
             counter = 0;
-            maxcounter = 2;
+            maxcounter = 4;
             this.board = board;
             this.playerNumber = playerNumber;
             storage = true;
@@ -43,7 +43,7 @@ namespace Virus
             NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
 
             db.Create(neoroot);
-
+            
             while (queue.Count != 0)
             {
                 Node visiting = (Node)queue.Dequeue();
@@ -146,7 +146,7 @@ namespace Virus
             watch.Start();
             BFS(root);
             watch.Stop();
-            Console.WriteLine("Time elapsed while writing to the database: "+watch.ElapsedTicks);
+            Console.WriteLine("Time elapsed while writing to the database: "+watch.Elapsed.TotalSeconds);
         }
 
         private int MIN(Node tmp, Board tempBoard)
@@ -352,9 +352,6 @@ namespace Virus
                 {
                     bestMove = moves[0];
                 }
-
-                //Stores the current root in the Neo4j Database locally
-                //BFS(root);
             }
             catch (Exception)
             {

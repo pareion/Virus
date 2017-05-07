@@ -1,14 +1,10 @@
 ﻿using NeuralNetwork;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Virus.Persistance;
 
 namespace Virus
 {
-    class NeuralNetworkComputer : VirusPlayer
+    public class NeuralNetworkComputer : VirusPlayer
     {
         NeuralNet net;
         Board board;

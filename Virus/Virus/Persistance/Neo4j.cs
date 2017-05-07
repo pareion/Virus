@@ -7,10 +7,11 @@ using System.Threading.Tasks;
 
 namespace Virus.Persistance
 {
-    public class Neo4j
+    public class Neo4j : IDB
     {
         private static Neo4j client = null;
         private GraphClient db;
+
         private Neo4j()
         {
             db = new GraphClient(new Uri("http://localhost:7474/db/data"), "anders", "anders2");
@@ -36,19 +37,19 @@ namespace Virus.Persistance
             try
             {
                 db.Cypher
-                       .Match("(node:NeoNode)")
-                       //.Where((NeoNode dnode) => dnode.id == id)
-                       .Where("node.id = " + id)
-                       .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
-                       .WithParam("node4", node)
-                       .ExecuteWithoutResults();
+                        .Match("(node:NeoNode)")
+                        //.Where((NeoNode dnode) => dnode.id == id)
+                        .Where("node.id = " + id)
+                        .Create("(node)-[:CHILD]->(child:NeoNode {node4})")
+                        .WithParam("node4", node)
+                        .ExecuteWithoutResults();
                 return true;
             }
             catch (Exception)
             {
                 return false;
             }
-            
+
         }
     }
 }
