@@ -10,7 +10,7 @@ namespace NeuralNetwork
     {
         public static double SigmoidDerivative(double value)
         {
-            return value * (1.0F - value);
+            return 1.0 / (1.0 + Math.Exp(-value));
         }
         public static double SoftSigmoid(double value)
         {

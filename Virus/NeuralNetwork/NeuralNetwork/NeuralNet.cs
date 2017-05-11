@@ -40,7 +40,6 @@ namespace NeuralNetwork
             Random rand4 = new Random(this.seed);
 
             int i, j;
-
             for (i = 0; i < inputNeurons; i++)
                 inputLayer.neurons.Add(new Neuron(0, activation));
 
@@ -49,13 +48,13 @@ namespace NeuralNetwork
 
             for (i = 0; i < outputNeurons; i++)
                 outputLayer.neurons.Add(new Neuron(rand2.NextDouble(), activation));
-
+            double bias = 0.5;
             //Wire input together with the hidden layer
             for (i = 0; i < hiddenLayer.neurons.Count; i++)
             {
                 for (j = 0; j < inputLayer.neurons.Count; j++)
                 {
-                    hiddenLayer.neurons[i].Input.Add(new Link(inputLayer.neurons[j], rand3.NextDouble()));
+                    hiddenLayer.neurons[i].Input.Add(new Link(inputLayer.neurons[j], rand3.NextDouble() - bias));
                 }
             }
 
@@ -65,7 +64,7 @@ namespace NeuralNetwork
             {
                 for (j = 0; j < hiddenLayer.neurons.Count; j++)
                 {
-                    outputLayer.neurons[i].Input.Add(new Link(hiddenLayer.neurons[j], rand4.NextDouble()));
+                    outputLayer.neurons[i].Input.Add(new Link(hiddenLayer.neurons[j], rand4.NextDouble() - bias));
                 }
             }
         }
@@ -73,8 +72,10 @@ namespace NeuralNetwork
         {
             lock (this)
             {
+                Console.WriteLine("Starting training");
                 for (int i = 0; i < iterations; i++)
                 {
+                    Console.Write(i % 20 == 0 ? "." : null);
                     for (int a = 0; a < iterations; a++)
                     {
                         InitiateLearning();
@@ -153,7 +154,7 @@ namespace NeuralNetwork
                     {
                         momentum = Math.Abs(expected[i3] - neuralNet.outputLayer.neurons[i3].Output);
                     }
-                    output.Input[i].Weight +=  momentum * learningrate * output.error * node.Output;
+                    output.Input[i].Weight += momentum * learningrate * output.error * node.Output;
                     output.delta += momentum * learningrate * output.error * output.weight;
                 }
             }

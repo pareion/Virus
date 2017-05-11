@@ -17,13 +17,13 @@ namespace Virus
         public bool storage;
         IDB db;
 
-        public MiniMaxComputer(Board board, int playerNumber, IDB db)
+        public MiniMaxComputer(Board board, int playerNumber, IDB db, bool storage, int depth)
         {
             counter = 0;
-            maxcounter = 4;
+            maxcounter = depth;
             this.board = board;
             this.playerNumber = playerNumber;
-            storage = true;
+            this.storage = storage;
             this.db = db;
         }
         public void play()
