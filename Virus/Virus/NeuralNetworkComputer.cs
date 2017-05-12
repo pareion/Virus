@@ -1,22 +1,35 @@
 ﻿using NeuralNetwork;
 using System;
+using System.Collections.Generic;
+using System.Threading;
 using Virus.Persistance;
 
 namespace Virus
 {
     public class NeuralNetworkComputer : VirusPlayer
     {
+        public bool training;
         NeuralNet net;
         Board board;
         int playerNumber;
         MiniMaxComputer trainer;
+        Random random = new Random();
         public NeuralNetworkComputer(Board board, int playerNumber, ActivationFunction activation, bool storage, int depth)
         {
             this.board = board;
             this.playerNumber = playerNumber;
             trainer = new MiniMaxComputer(board, playerNumber, SQL.GetClient(), storage, depth);
             net = new NeuralNet(activation);
+
+            training = true;
+
+            int inputN, hiddenN, outputN;
+            inputN = 16 * 3;
+            hiddenN = 16 * 4;
+            outputN = 16 * 3;
+            net.Init(3, inputN, hiddenN, outputN);
         }
+
 
         public void play()
         {
@@ -46,12 +59,21 @@ namespace Virus
             input[0] = vec;
             //end
 
+            //Define output for the neural network for retraining purpose
             //Define output for the neural network and train it with the help of minimax
-            Tuple<Board, Move> newBoard = trainer.PredictMiniMaxMove(board.Copy());
+            Tuple<Board, Move> newBoard = null;
+            try
+            {
+                newBoard = trainer.PredictMiniMaxMove(board.Copy());
+            }
+            catch (Exception)
+            {
+                return;
+            }
+
             double[][] output = new double[1][];
             double[] vecOutput = new double[board.boardSize * board.boardSize * 3];
             count = 0;
-
             for (int x = 0; x < board.boardSize; x++)
             {
                 for (int y = 0; y < board.boardSize; y++)
@@ -72,24 +94,6 @@ namespace Virus
                 }
             }
             output[0] = vecOutput;
-
-            int inputN, hiddenN, outputN;
-
-            inputN = 16 * 3;
-            hiddenN = 16 * 2;
-            outputN = 16 * 3;
-
-            net.Init(3, inputN, hiddenN, outputN);
-
-            net.Train(input, output, 0.5, 20);
-            //end
-
-            //Help debug
-            Console.WriteLine("Start board");
-            board.Display();
-            Console.WriteLine("New board after minimax");
-            newBoard.Item1.Display();
-            Console.WriteLine("-----");
             //end
 
             //Setting up the neural network
@@ -101,67 +105,128 @@ namespace Virus
             //end
 
             //Testing
+            /*
             for (int i = 0; i < net.inputLayer.neurons.Count; i++)
             {
                 Console.WriteLine("Input " + i + " : " + net.inputLayer.neurons[i].GetOutput());
             }
-          
+
             for (int i = 0; i < net.outputLayer.neurons.Count; i++)
             {
                 Console.WriteLine("Output " + i + " : " + net.outputLayer.neurons[i].GetOutput().ToString() + " Expected output: " + output[0][i]);
             }
+            */
             //end
 
             //Convert the output from the neural network to an actual move
-            int[,] convBoard = new int[board.boardSize, board.boardSize];
-
-            for (int i = 0; i < net.outputLayer.neurons.Count / 3; i++)
+            int[,] neuralBoard = new int[board.boardSize, board.boardSize];
+            int row = 0;
+            int coloumn = 0;
+            for (int i = 0; i < net.outputLayer.neurons.Count; i++)
             {
-                for (int j = 0; j < board.boardSize; j++)
+                if (net.outputLayer.neurons[i].GetOutput() > 0.90)
+                    neuralBoard[row, coloumn] = 2;
+                else if (net.outputLayer.neurons[i + 1].GetOutput() > 0.90)
+                    neuralBoard[row, coloumn] = 1;
+                else if (net.outputLayer.neurons[i + 2].GetOutput() > 0.90)
+                    neuralBoard[row, coloumn] = 0;
+
+                coloumn++;
+                i = i + 2;
+                if (coloumn > 3)
                 {
-                    if (net.outputLayer.neurons[i].Output > 0.90)
-                        convBoard[i, j] = 2;
-                    else if (net.outputLayer.neurons[i].Output > 0.90)
-                        convBoard[i + 1, j] = 1;
-                    else if (net.outputLayer.neurons[i].Output > 0.90)
-                        convBoard[i + 2, j] = 0;
+                    row++;
+                    coloumn = 0;
                 }
             }
             //end
+            
+            List<Move> moves = board.FindAvailableMoves(playerNumber);
 
+            //Figure out if the move is actually a valid move if so take the move if not retrain the network
+            Move move = null;
+            Board temp = board.Copy();
 
-            //board.MakeMove(newBoard.Item2.fromX, newBoard.Item2.fromY, newBoard.Item2.toX, newBoard.Item2.toY);
+            foreach (var item in moves)
+            {
+                temp.IsMoveEligable(item.fromX, item.fromY, item.toX, item.toY);
+                temp.MakeMove(item.fromX, item.fromY, item.toX, item.toY);
+                bool correct = true;
+                for (int x = 0; x < board.boardSize; x++)
+                {
+                    for (int y = 0; y < board.boardSize; y++)
+                    {
+                        if (neuralBoard[x,y] != temp.board[x,y])
+                        {
+                            correct = false;
+                        }
+                    }
+                }
+                if (correct)
+                {
+                    move = item;
+                    break;
+                }
+                temp = board.Copy();
+            }
+            try
+            {
+                board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
+                board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+            }
+            //end
+            catch (Exception)
+            {
+                int reTrain = 0;
+                for (int x = 0; x < board.boardSize; x++)
+                {
+                    for (int y = 0; y < board.boardSize; y++)
+                    {
+                        if (board.board[x,y] == 2)
+                        {
+                            reTrain++;
+                        }
+                    }
+                }
+                if (training)
+                {
+                    if (reTrain != 0)
+                    {
+                        Retrain(input, output);
+                    }
+                    else
+                    {
+                        List<Move> tmp = board.FindAvailableMoves(playerNumber);
+                        move = tmp[random.Next(0, tmp.Count)];
+                        board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
+                        board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+                    }
+                }
+                else
+                {
+                    try
+                    { 
+                        board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
+                        board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+                    }
+                    catch (Exception)
+                    {
+                        List<Move> tmp = board.FindAvailableMoves(playerNumber);
+                        move = tmp[random.Next(0, tmp.Count)];
+                        board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
+                        board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+                    }
+                }
+            }
         }
-        private void PrintOut(double val1, double val2)
+
+        private void Retrain(double[][] input, double[][] output)
         {
-            NeuralNet net2 = new NeuralNet(ActivationFunction.SigmoidDerivative);
-
-            double[][] input2 = new double[4][];
-            input2[0] = new double[] { 1, 1 };
-            input2[1] = new double[] { 0, 1 };
-            input2[2] = new double[] { 1, 0 };
-            input2[3] = new double[] { 0, 0 };
-            double[][] output2 = new double[4][];
-            output2[0] = new double[] { 0 };
-            output2[1] = new double[] { 1 };
-            output2[2] = new double[] { 1 };
-            output2[3] = new double[] { 0 };
-
-            net2.Init(3, 2, 4, 1);
-            net2.Train(input2, output2, 0.3, 200);
-
-            bool result;
-
-            net2.inputLayer.neurons[0].SetOutput(val1);
-            net2.inputLayer.neurons[1].SetOutput(val2);
-
-            net2.Pulse();
-
-            result = net2.outputLayer.neurons[0].GetOutput() > .5;
-
-            Console.WriteLine("Input 1 / 2: " + val1 + " " + val2);
-            Console.WriteLine("The actual result: " + result.ToString());
-            Console.WriteLine(net2.outputLayer.neurons[0].GetOutput() + " % ");
+            //Train the network and try to make a valid move
+            net.Train(input, output, 0.5, 20);
+            Console.WriteLine("Training the network again");
+            play();
+            //end
         }
     }
 }

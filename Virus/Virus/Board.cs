@@ -21,6 +21,7 @@ namespace Virus
         {
             board = new int[size, size];
             boardSize = size;
+            StartGame();
         }
         public void StartGame()
         {
@@ -82,7 +83,7 @@ namespace Virus
             {
                 roundWithoutChange++;
             }
-            if (GetBricks().Count == boardSize * boardSize || roundWithoutChange > 20)
+            if (GetBricks().Count == boardSize * boardSize || roundWithoutChange > 50)
                 return true;
             return false;
         }

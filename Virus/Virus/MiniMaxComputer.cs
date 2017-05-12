@@ -335,7 +335,7 @@ namespace Virus
                         Node tmp = new Node();
                         counter++;
                         tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                        int a = tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                        tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
                         minscore = MIN(tmp, tempBoard);
                         tmp.value = minscore;
                         root.children.Add(tmp);
@@ -357,7 +357,7 @@ namespace Virus
             {
 
             }
-            tempboard.MakeMove(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+            tempboard.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
             return new Tuple<Board, Move>(tempboard, bestMove);
         }
         private class Node : IRelationshipAllowingParticipantNode<Node>, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
