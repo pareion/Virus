@@ -72,10 +72,8 @@ namespace NeuralNetwork
         {
             lock (this)
             {
-                Console.WriteLine("Starting training");
                 for (int i = 0; i < iterations; i++)
                 {
-                    Console.Write(i % 20 == 0 ? "." : null);
                     for (int a = 0; a < iterations; a++)
                     {
                         InitiateLearning();
@@ -83,7 +81,6 @@ namespace NeuralNetwork
                         {
                             BackPropogation_TrainingSession(this, Input[b], ExpectedOutput[b], learningrate);
                         }
-                        ApplyLearning(learningrate);
                     }
                 }
             }
@@ -114,15 +111,6 @@ namespace NeuralNetwork
             }
         }
 
-        private void ApplyLearning(double learningrate)
-        {
-            lock (this)
-            {
-                hiddenLayer.ApplyLearning(learningrate);
-                outputLayer.ApplyLearning(learningrate);
-            }
-        }
-
         private void AdjuestNet(NeuralNet neuralNet, double learningrate, double[] expected)
         {
             for (int i = 0; i < neuralNet.hiddenLayer.neurons.Count; i++)
@@ -132,13 +120,9 @@ namespace NeuralNetwork
                 for (int i2 = 0; i2 < neuralNet.outputLayer.neurons.Count; i2++)
                 {
                     Neuron output = neuralNet.outputLayer.neurons[i2];
-                    double momentum = 0;
-                    for (int i3 = 0; i3 < expected.Count(); i3++)
-                    {
-                        momentum = Math.Abs(expected[i3] - output.Output);
-                    }
-                    output.Input[i].Weight += momentum * learningrate * output.error * node.Output;
-                    output.delta += momentum * learningrate * output.error * output.weight;
+
+                    output.Input[i].Weight += learningrate * output.error * node.Output;
+                    output.delta += learningrate * output.error * output.weight;
                 }
             }
 
@@ -149,13 +133,9 @@ namespace NeuralNetwork
                 for (int i2 = 0; i2 < neuralNet.hiddenLayer.neurons.Count; i2++)
                 {
                     Neuron output = neuralNet.hiddenLayer.neurons[i2];
-                    double momentum = 0;
-                    for (int i3 = 0; i3 < expected.Count(); i3++)
-                    {
-                        momentum = Math.Abs(expected[i3] - neuralNet.outputLayer.neurons[i3].Output);
-                    }
-                    output.Input[i].Weight += momentum * learningrate * output.error * node.Output;
-                    output.delta += momentum * learningrate * output.error * output.weight;
+
+                    output.Input[i].Weight += learningrate * output.error * node.Output;
+                    output.delta += learningrate * output.error * output.weight;
                 }
             }
         }

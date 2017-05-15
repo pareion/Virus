@@ -48,16 +48,6 @@ namespace NeuralNetwork
             lastdelta = 0;
         }
 
-        internal void ApplyLearning(NeuralLayer neuralLayer, double learningRate)
-        {
-            foreach (var item in Input)
-            {
-                item.ApplyLearning(learningRate);
-            }
-            lastdelta = delta;
-            weight += delta * learningRate;
-        }
-
         public double GetOutput()
         {
             return Output;

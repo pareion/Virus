@@ -224,7 +224,6 @@ namespace Virus
         {
             //Train the network and try to make a valid move
             net.Train(input, output, 0.5, 20);
-            Console.WriteLine("Training the network again");
             play();
             //end
         }

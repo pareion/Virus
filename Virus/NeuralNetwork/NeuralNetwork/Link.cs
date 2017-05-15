@@ -19,11 +19,6 @@ namespace NeuralNetwork
             DeltaWeight = 0;
             LastDeltaWeight = 0;
         }
-        public void ApplyLearning(double learningRate)
-        {
-            LastDeltaWeight = DeltaWeight;
-            Weight += DeltaWeight * learningRate;
-        }
 
     }
 }
