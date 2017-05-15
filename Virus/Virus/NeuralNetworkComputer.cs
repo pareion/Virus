@@ -104,20 +104,6 @@ namespace Virus
             net.Pulse();
             //end
 
-            //Testing
-            /*
-            for (int i = 0; i < net.inputLayer.neurons.Count; i++)
-            {
-                Console.WriteLine("Input " + i + " : " + net.inputLayer.neurons[i].GetOutput());
-            }
-
-            for (int i = 0; i < net.outputLayer.neurons.Count; i++)
-            {
-                Console.WriteLine("Output " + i + " : " + net.outputLayer.neurons[i].GetOutput().ToString() + " Expected output: " + output[0][i]);
-            }
-            */
-            //end
-
             //Convert the output from the neural network to an actual move
             int[,] neuralBoard = new int[board.boardSize, board.boardSize];
             int row = 0;
@@ -140,7 +126,7 @@ namespace Virus
                 }
             }
             //end
-            
+
             List<Move> moves = board.FindAvailableMoves(playerNumber);
 
             //Figure out if the move is actually a valid move if so take the move if not retrain the network
@@ -156,7 +142,7 @@ namespace Virus
                 {
                     for (int y = 0; y < board.boardSize; y++)
                     {
-                        if (neuralBoard[x,y] != temp.board[x,y])
+                        if (neuralBoard[x, y] != temp.board[x, y])
                         {
                             correct = false;
                         }
@@ -177,45 +163,16 @@ namespace Virus
             //end
             catch (Exception)
             {
-                int reTrain = 0;
-                for (int x = 0; x < board.boardSize; x++)
-                {
-                    for (int y = 0; y < board.boardSize; y++)
-                    {
-                        if (board.board[x,y] == 2)
-                        {
-                            reTrain++;
-                        }
-                    }
-                }
                 if (training)
                 {
-                    if (reTrain != 0)
-                    {
-                        Retrain(input, output);
-                    }
-                    else
-                    {
-                        List<Move> tmp = board.FindAvailableMoves(playerNumber);
-                        move = tmp[random.Next(0, tmp.Count)];
-                        board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
-                        board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
-                    }
+                    Retrain(input, output);
                 }
                 else
                 {
-                    try
-                    { 
-                        board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
-                        board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
-                    }
-                    catch (Exception)
-                    {
-                        List<Move> tmp = board.FindAvailableMoves(playerNumber);
-                        move = tmp[random.Next(0, tmp.Count)];
-                        board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
-                        board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
-                    }
+                    List<Move> tmp = board.FindAvailableMoves(playerNumber);
+                    move = tmp[random.Next(0, tmp.Count)];
+                    board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
+                    board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
                 }
             }
         }

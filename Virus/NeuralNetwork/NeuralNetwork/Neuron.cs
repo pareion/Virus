@@ -6,19 +6,14 @@ namespace NeuralNetwork
     public class Neuron
     {
         public double bias;
-        public double weight;
         public double Output;
         public double error;
-        public double delta;
-        public double lastdelta;
         public List<Link> Input = new List<Link>();
         public ActivationFunction activation;
 
         public Neuron(double bias, ActivationFunction activation)
         {
             this.bias = bias;
-            delta = 0;
-            lastdelta = 0;
             this.activation = activation;
         }
 
@@ -44,8 +39,6 @@ namespace NeuralNetwork
                 item.LastDeltaWeight = 0;
                 item.DeltaWeight = 0;
             }
-            delta = 0;
-            lastdelta = 0;
         }
 
         public double GetOutput()

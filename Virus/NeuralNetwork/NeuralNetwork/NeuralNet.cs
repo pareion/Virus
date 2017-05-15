@@ -122,7 +122,6 @@ namespace NeuralNetwork
                     Neuron output = neuralNet.outputLayer.neurons[i2];
 
                     output.Input[i].Weight += learningrate * output.error * node.Output;
-                    output.delta += learningrate * output.error * output.weight;
                 }
             }
 
@@ -135,7 +134,6 @@ namespace NeuralNetwork
                     Neuron output = neuralNet.hiddenLayer.neurons[i2];
 
                     output.Input[i].Weight += learningrate * output.error * node.Output;
-                    output.delta += learningrate * output.error * output.weight;
                 }
             }
         }
