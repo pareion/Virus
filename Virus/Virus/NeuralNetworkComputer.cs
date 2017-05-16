@@ -71,8 +71,7 @@ namespace Virus
             }
             input[0] = vec;
             //end
-
-            //Define output for the neural network for retraining purpose
+            
             //Define output for the neural network and train it with the help of minimax
             newBoard = null;
             try
@@ -83,7 +82,10 @@ namespace Virus
             {
 
             }
-
+            if (newBoard == null)
+            {
+                return;
+            }
             output = new double[1][];
             vecOutput = new double[board.boardSize * board.boardSize * 3];
             count = 0;
@@ -180,6 +182,7 @@ namespace Virus
             //end
             catch (Exception)
             {
+                Console.WriteLine("retraining");
                 Retrain(input, output);
             }
         }
