@@ -25,7 +25,7 @@ namespace Virus
         }
         public void StartGame()
         {
-            NeuralNetworkComputer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 3);
+            NeuralNetworkComputer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
             //MiniMaxComputer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), false, 3);
             SemiSmartComputer player2 = new SemiSmartComputer(board, 2);
             bool visual = false;

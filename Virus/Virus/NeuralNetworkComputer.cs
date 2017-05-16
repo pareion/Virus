@@ -44,6 +44,7 @@ namespace Virus
         int x, y, i;
         Tuple<Board, Move> newBoard;
         bool correct;
+        double error;
         public void play()
         {
             //Define input for the neural network
@@ -71,7 +72,7 @@ namespace Virus
             }
             input[0] = vec;
             //end
-            
+
             //Define output for the neural network and train it with the help of minimax
             newBoard = null;
             try
@@ -124,16 +125,23 @@ namespace Virus
             row = 0;
             coloumn = 0;
             count = 0;
-            double error = 0;
+
             for (i = 0; i < net.outputLayer.neurons.Count; i++)
             {
-                if (net.outputLayer.neurons[i].GetOutput() > 0.60)
+                if (net.outputLayer.neurons[i].GetOutput() > 0.9)
+                {
                     neuralBoard[row, coloumn] = 2;
-                else if (net.outputLayer.neurons[i + 1].GetOutput() > 0.60)
+                }
+                else if (net.outputLayer.neurons[i + 1].GetOutput() > 0.9)
+                {
                     neuralBoard[row, coloumn] = 1;
-                else if (net.outputLayer.neurons[i + 2].GetOutput() > 0.60)
+                }
+
+                else if (net.outputLayer.neurons[i + 2].GetOutput() > 0.9)
+                {
                     neuralBoard[row, coloumn] = 0;
-                error += Math.Abs(net.outputLayer.neurons[i].GetOutput() - output[0][count]);
+                }
+                
                 coloumn++;
                 i = i + 2;
                 if (coloumn > board.boardSize - 1)
@@ -143,7 +151,15 @@ namespace Virus
                 }
                 count++;
             }
-            Console.WriteLine("Error this time: "+error);
+            net.CalculateErrors(net, output[0]);
+            double error = 0;
+            foreach (var item in net.outputLayer.neurons)
+            {
+                error += Math.Abs(item.error);
+            }
+            Console.WriteLine("Error: "+error);
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
             //end
 
             moves = board.FindAvailableMoves(playerNumber);
@@ -182,7 +198,6 @@ namespace Virus
             //end
             catch (Exception)
             {
-                Console.WriteLine("retraining");
                 Retrain(input, output);
             }
         }
