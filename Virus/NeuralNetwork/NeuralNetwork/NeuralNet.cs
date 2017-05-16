@@ -68,16 +68,17 @@ namespace NeuralNetwork
                 }
             }
         }
+        int i, a, b;
         public void Train(double[][] Input, double[][] ExpectedOutput, double learningrate, int iterations)
         {
             lock (this)
             {
-                for (int i = 0; i < iterations; i++)
+                for (i = 0; i < iterations; i++)
                 {
-                    for (int a = 0; a < iterations; a++)
+                    for (a = 0; a < iterations; a++)
                     {
                         InitiateLearning();
-                        for (int b = 0; b < Input.Count(); b++)
+                        for (b = 0; b < Input.Count(); b++)
                         {
                             BackPropogation_TrainingSession(this, Input[b], ExpectedOutput[b], learningrate);
                         }
@@ -96,7 +97,7 @@ namespace NeuralNetwork
 
         private void PreparePerceptionLayerForPulse(NeuralNet neuralNet, double[] input)
         {
-            for (int i = 0; i < inputLayer.neurons.Count; i++)
+            for (i = 0; i < inputLayer.neurons.Count; i++)
             {
                 neuralNet.inputLayer.neurons[i].Output = input[i];
             }
@@ -110,16 +111,16 @@ namespace NeuralNetwork
                 outputLayer.InitiateLearning();
             }
         }
-
+        Neuron node, output;
         private void AdjuestNet(NeuralNet neuralNet, double learningrate, double[] expected)
         {
             for (int i = 0; i < neuralNet.hiddenLayer.neurons.Count; i++)
             {
-                Neuron node = neuralNet.hiddenLayer.neurons[i];
+                node = neuralNet.hiddenLayer.neurons[i];
 
                 for (int i2 = 0; i2 < neuralNet.outputLayer.neurons.Count; i2++)
                 {
-                    Neuron output = neuralNet.outputLayer.neurons[i2];
+                    output = neuralNet.outputLayer.neurons[i2];
 
                     output.Input[i].Weight += learningrate * output.error * node.Output;
                 }
@@ -127,11 +128,11 @@ namespace NeuralNetwork
 
             for (int i = 0; i < neuralNet.inputLayer.neurons.Count; i++)
             {
-                Neuron node = neuralNet.inputLayer.neurons[i];
+                node = neuralNet.inputLayer.neurons[i];
 
                 for (int i2 = 0; i2 < neuralNet.hiddenLayer.neurons.Count; i2++)
                 {
-                    Neuron output = neuralNet.hiddenLayer.neurons[i2];
+                    output = neuralNet.hiddenLayer.neurons[i2];
 
                     output.Input[i].Weight += learningrate * output.error * node.Output;
                 }
