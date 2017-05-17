@@ -73,44 +73,7 @@ namespace Virus
             input[0] = vec;
             //end
 
-            //Define output for the neural network and train it with the help of minimax
-            newBoard = null;
-            try
-            {
-                newBoard = trainer.PredictMiniMaxMove(board.Copy());
-            }
-            catch (Exception)
-            {
-
-            }
-            if (newBoard == null)
-            {
-                return;
-            }
-            output = new double[1][];
-            vecOutput = new double[board.boardSize * board.boardSize * 3];
-            count = 0;
-            for (x = 0; x < board.boardSize; x++)
-            {
-                for (y = 0; y < board.boardSize; y++)
-                {
-                    if (newBoard.Item1.board[x, y] == 2)
-                    {
-                        vecOutput[count] = 1;
-                    }
-                    else if (newBoard.Item1.board[x, y] == 1)
-                    {
-                        vecOutput[count + 1] = 1;
-                    }
-                    else
-                    {
-                        vecOutput[count + 2] = 1;
-                    }
-                    count = count + 3;
-                }
-            }
-            output[0] = vecOutput;
-            //end
+            
 
             //Setting up the neural network
             for (int i = 0; i < net.inputLayer.neurons.Count; i++)
@@ -151,17 +114,7 @@ namespace Virus
                 }
                 count++;
             }
-            net.CalculateErrors(net, output[0]);
-            double error = 0;
-            foreach (var item in net.outputLayer.neurons)
-            {
-                error += Math.Abs(item.error);
-            }
-            Console.WriteLine("Error: "+error);
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-            //end
-
+            
             moves = board.FindAvailableMoves(playerNumber);
 
             //Figure out if the move is actually a valid move if so take the move if not retrain the network
@@ -198,6 +151,59 @@ namespace Virus
             //end
             catch (Exception)
             {
+                //Define output for the neural network and train it with the help of minimax
+                newBoard = null;
+                try
+                {
+                    newBoard = trainer.PredictMiniMaxMove(board.Copy());
+                }
+                catch (Exception)
+                {
+
+                }
+                if (newBoard == null)
+                {
+                    return;
+                }
+                output = new double[1][];
+                vecOutput = new double[board.boardSize * board.boardSize * 3];
+                count = 0;
+                for (x = 0; x < board.boardSize; x++)
+                {
+                    for (y = 0; y < board.boardSize; y++)
+                    {
+                        if (newBoard.Item1.board[x, y] == 2)
+                        {
+                            vecOutput[count] = 1;
+                        }
+                        else if (newBoard.Item1.board[x, y] == 1)
+                        {
+                            vecOutput[count + 1] = 1;
+                        }
+                        else
+                        {
+                            vecOutput[count + 2] = 1;
+                        }
+                        count = count + 3;
+                    }
+                }
+                output[0] = vecOutput;
+
+                net.CalculateErrors(net, output[0]);
+                double error = 0;
+                foreach (var item in net.outputLayer.neurons)
+                {
+                    error += Math.Abs(item.error);
+                }
+                Console.WriteLine("Error: " + error);
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                for (int i = 0; i < output[0].Length; i++)
+                {
+                    Console.WriteLine("Output: " + output[0][i] + " expected output: " + net.outputLayer.neurons[i].Output);
+                }
+                Console.Read();
                 Retrain(input, output);
             }
         }
@@ -205,7 +211,7 @@ namespace Virus
         private void Retrain(double[][] input, double[][] output)
         {
             //Train the network and try to make a valid move
-            net.Train(input, output, 0.1, 30);
+            net.Train(input, output, 0.1, 1);
             GC.Collect();
             GC.WaitForPendingFinalizers();
             play();

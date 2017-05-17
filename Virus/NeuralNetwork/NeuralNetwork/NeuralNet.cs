@@ -39,6 +39,7 @@ namespace NeuralNetwork
             Random rand3 = new Random(this.seed);
             Random rand4 = new Random(this.seed);
 
+            double bias = 0.5;
             int i, j;
             for (i = 0; i < inputNeurons; i++)
                 inputLayer.neurons.Add(new Neuron(0, activation));
@@ -48,7 +49,7 @@ namespace NeuralNetwork
 
             for (i = 0; i < outputNeurons; i++)
                 outputLayer.neurons.Add(new Neuron(rand2.NextDouble(), activation));
-            double bias = 0.5;
+            
             //Wire input together with the hidden layer
             for (i = 0; i < hiddenLayer.neurons.Count; i++)
             {
