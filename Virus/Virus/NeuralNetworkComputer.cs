@@ -195,15 +195,8 @@ namespace Virus
                 {
                     error += Math.Abs(item.error);
                 }
-                Console.WriteLine("Error: " + error);
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                for (int i = 0; i < output[0].Length; i++)
-                {
-                    Console.WriteLine("Output: " + output[0][i] + " expected output: " + net.outputLayer.neurons[i].Output);
-                }
-                Console.Read();
+                Log.WriteErrorGameLog(board.boardSize, "Error: "+error.ToString());
+                
                 Retrain(input, output);
             }
         }
@@ -212,8 +205,6 @@ namespace Virus
         {
             //Train the network and try to make a valid move
             net.Train(input, output, 0.1, 1);
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
             play();
             //end
         }

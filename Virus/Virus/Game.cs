@@ -25,16 +25,17 @@ namespace Virus
         }
         public void StartGame()
         {
-            VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
-            //MiniMaxComputer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), false, 3);
+            //VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
+            MiniMaxComputer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), true, 3);
             VirusPlayer player2 = new SemiSmartComputer(board, 2);
             bool visual = false;
             int[] result = new int[2];
-            
+
             for (int i = 0; i < 5; i++)
             {
                 while (!board.IsDone())
                 {
+                    //List<Persistance.EntityFramework.Node> res = SQL.GetClient().ReadAllNodes();
                     player1.play();
                     if (visual)
                     {
@@ -45,6 +46,7 @@ namespace Virus
                     {
                         board.Display();
                     }
+                    Console.Read();
                 }
                 int[] result2 = board.GetScore();
                 for (int b = 0; b < result2.Count(); b++)
@@ -53,10 +55,10 @@ namespace Virus
                 }
                 board.reset();
             }
-            for (int i = 0; i < result.Count(); i++)
-            {
-                Console.WriteLine("Gameboard : " + gameSize + " Player " + (i + 1) + " points: " + result[i]);
-            }
+
+            Log.WriteLineToLog("Game size " + gameSize + " Player 1 points: " + result[0]);
+            Log.WriteLineToLog("Game size " + gameSize + " Player 2 points: " + result[1]);
+
         }
     }
 }

@@ -11,8 +11,11 @@ namespace Virus
     {
         static void Main(string[] args)
         {
-            Game game = new Game(6);
-            game.StartGame();
+            for (int i = 7; i < 12; i++)
+            {
+                Game game = new Game(i);
+                game.StartGame();
+            }
         }
     }
 }
