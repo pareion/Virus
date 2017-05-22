@@ -116,7 +116,7 @@ namespace Virus
         /// <returns></returns>
         public virtual int MoveBrick(int brickToMoveX, int brickToMoveY, int moveToHereX, int moveToHereY)
         {
-            if (board[brickToMoveX,brickToMoveY] != playerTurn)
+            if (board[brickToMoveX, brickToMoveY] != playerTurn)
             {
                 return -1;
             }
@@ -197,7 +197,7 @@ namespace Virus
                     {
                         int x3 = bricks[i].Item2 - x2;
                         int y3 = bricks[i].Item3 - y2;
-                    
+
                         int result = TryMakeMove(bricks[i].Item1, bricks[i].Item2, bricks[i].Item3, x3, y3);
                         if (result != -1)
                         {
@@ -224,40 +224,12 @@ namespace Virus
 
         private bool CantMove()
         {
-            
+
             if (FindAvailableMoves(playerTurn).Count > 0)
             {
                 return false;
             }
             return true;
-            /*List<Tuple<int,int,int>> list = GetBricks(playerTurn);
-            foreach (var item in list)
-            {
-
-                for (int x = -1; x <= 1; x++)
-                {
-                    for (int y = -1; y <= 1; y++)
-                    {
-                        int x2 = -1;
-                        int y2 = -1;
-                        if (x > item.Item2)
-                            x2 = (x - item.Item2);
-                        else
-                            x2 = (item.Item2 - x);
-                        if (y > item.Item3)
-                            y2 = (y - item.Item3);
-                        else
-                            y2 = (item.Item3 - y);
-
-                        int result = TryMakeMove(playerTurn, item.Item2, item.Item3, x2, y2);
-                        if (result != -1)
-                        {
-                            return false;
-                        }
-                    }
-                }
-            }
-            return true;*/
         }
 
         /// <summary>
@@ -338,8 +310,6 @@ namespace Virus
 
             int taken = 0;
 
-            //Jump move
-            //Jump move
             if (jumping)
             {
                 taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player);
@@ -348,11 +318,8 @@ namespace Virus
             }
             else
             {
-                //Normal move
                 taken += AssumeCapturedPieces(moveToHereX, moveToHereY, player);
-
             }
-
             return taken;
         }
 
@@ -377,8 +344,7 @@ namespace Virus
             int player = board[brickToMoveX, brickToMoveY];
 
             int taken = 0;
-
-            //Jump move
+            
             if (jumping)
             {
                 taken += CapturePieces(moveToHereX, moveToHereY, player);
@@ -389,7 +355,6 @@ namespace Virus
             }
             else
             {
-                //Normal move
                 taken += CapturePieces(moveToHereX, moveToHereY, player);
                 taken += 1;
                 board[moveToHereX, moveToHereY] = player;
@@ -659,6 +624,12 @@ namespace Virus
                 }
             }
             return board;
+        }
+        public Board GetNewBoard(Board board, Move move)
+        {
+            Board temp = board.Copy();
+            temp.MakeMove(move.fromX, move.fromY, move.toX, move.toY);
+            return temp;
         }
     }
 }

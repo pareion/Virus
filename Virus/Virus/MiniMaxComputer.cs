@@ -360,6 +360,11 @@ namespace Virus
             tempboard.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
             return new Tuple<Board, Move>(tempboard, bestMove);
         }
+
+        public void AfterGame()
+        {
+        }
+
         private class Node : IRelationshipAllowingParticipantNode<Node>, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
         {
             public List<Node> children = new List<Node>();

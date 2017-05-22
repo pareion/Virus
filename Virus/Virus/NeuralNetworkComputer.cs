@@ -208,5 +208,9 @@ namespace Virus
             play();
             //end
         }
+
+        public void AfterGame()
+        {
+        }
     }
 }

@@ -17,6 +17,10 @@ namespace Virus
             this.playerNumber = playerNumber;
         }
 
+        public void AfterGame()
+        {
+        }
+
         public void play()
         {
             List<Tuple<int, int, int, int>> result = FindAvailableMoves();

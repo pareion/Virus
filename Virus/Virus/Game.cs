@@ -26,35 +26,44 @@ namespace Virus
         public void StartGame()
         {
             //VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
-            MiniMaxComputer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), true, 3);
-            VirusPlayer player2 = new SemiSmartComputer(board, 2);
+            //VirusPlayer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), true, 3);
+            VirusPlayer player1 = new QLearningComputer(board, 0.1, 0.1, 1);
+            VirusPlayer player2 = new RandomComputer(board, 2);
             bool visual = false;
             int[] result = new int[2];
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10000; i++)
             {
-                while (!board.IsDone())
+                for (int j = 0; j < 3; j++)
                 {
-                    //List<Persistance.EntityFramework.Node> res = SQL.GetClient().ReadAllNodes();
-                    player1.play();
-                    if (visual)
+                    while (!board.IsDone())
                     {
-                        board.Display();
+                        player1.play();
+                        if (visual)
+                        {
+                            board.Display();
+                        }
+                        player2.play();
+                        if (visual)
+                        {
+                            board.Display();
+                        }
                     }
-                    player2.play();
-                    if (visual)
+                    player1.AfterGame();
+                    player2.AfterGame();
+                    int[] result2 = board.GetScore();
+                    for (int b = 0; b < result2.Count(); b++)
                     {
-                        board.Display();
+                        result[b] += result2[b];
                     }
-                    Console.Read();
+                    
+                    board.reset();
                 }
-                int[] result2 = board.GetScore();
-                for (int b = 0; b < result2.Count(); b++)
-                {
-                    result[b] += result2[b];
-                }
-                board.reset();
+                Console.WriteLine("Game size " + gameSize + " Player 1 points: " + result[0]);
+                Console.WriteLine("Game size " + gameSize + " Player 2 points: " + result[1]);
+                result = new int[2];
             }
+            
 
             Log.WriteLineToLog("Game size " + gameSize + " Player 1 points: " + result[0]);
             Log.WriteLineToLog("Game size " + gameSize + " Player 2 points: " + result[1]);

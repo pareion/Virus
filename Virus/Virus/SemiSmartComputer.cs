@@ -16,6 +16,11 @@ namespace Virus
             this.board = board;
             this.playerNumber = playerNumber;
         }
+
+        public void AfterGame()
+        {
+        }
+
         public void play()
         {
             List<Move> result = board.FindAvailableMoves(playerNumber);

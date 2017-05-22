@@ -9,5 +9,6 @@ namespace Virus
     public interface VirusPlayer
     {
         void play();
+        void AfterGame();
     }
 }
