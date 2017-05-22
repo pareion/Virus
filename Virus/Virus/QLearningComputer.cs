@@ -34,13 +34,6 @@ namespace Virus
             Rreward = new double[board.boardSize, board.boardSize];
             movesMade = new List<Move>();
             random = new Random();
-            for (int x = 0; x < board.boardSize; x++)
-            {
-                for (int y = 0; y < board.boardSize; y++)
-                {
-                    Rreward[x, y] = 0;
-                }
-            }
         }
 
         public void AfterGame()
@@ -50,7 +43,7 @@ namespace Virus
             {
                 if (result[playerNumber - 1] > result[0] || result[playerNumber - 1] > result[1])
                 {
-                    Rreward[move.toX, move.toY]++;
+                    Rreward[move.toX, move.toY] = Rreward[move.toX, move.toY] + 1;
                 }
                 else
                 {

@@ -93,7 +93,7 @@ namespace Virus
                 int bestScorer = 9999;
                 int minscore;
 
-                List<Move> moves = board.FindAvailableMoves(1);
+                List<Move> moves = board.FindAvailableMoves(playerNumber);
                 root = new Node();
                 if (moves != null)
                 {
@@ -161,9 +161,16 @@ namespace Virus
             else
             {
                 int bestScore = 999;
-
-
-                List<Move> moves = tempBoard.FindAvailableMoves(2);
+                List<Move> moves;
+                if (playerNumber == 1)
+                {
+                    moves = tempBoard.FindAvailableMoves(2);
+                }
+                else
+                {
+                    moves = tempBoard.FindAvailableMoves(1);
+                }
+                
                 Board previousBoard = tempBoard.Copy();
                 for (int i = 0; i < moves.Count; i++)
                 {
@@ -203,7 +210,7 @@ namespace Virus
                 int bestScore = -999;
 
 
-                List<Move> moves = tempBoard.FindAvailableMoves(1);
+                List<Move> moves = tempBoard.FindAvailableMoves(playerNumber);
                 Board previousBoard = tempBoard.Copy();
                 for (int i = 0; i < moves.Count; i++)
                 {
@@ -239,13 +246,27 @@ namespace Virus
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)
                 {
-                    if (tempBoard.board[x, y] == 2)
+                    if (playerNumber == 1)
                     {
-                        Cpoints++;
+                        if (tempBoard.board[x, y] == 2)
+                        {
+                            Cpoints++;
+                        }
+                        if (tempBoard.board[x, y] == 1)
+                        {
+                            Hpoints++;
+                        }
                     }
-                    if (tempBoard.board[x, y] == 1)
+                    else
                     {
-                        Hpoints++;
+                        if (tempBoard.board[x, y] == 2)
+                        {
+                            Hpoints++;
+                        }
+                        if (tempBoard.board[x, y] == 1)
+                        {
+                            Cpoints++;
+                        }
                     }
                 }
             }
@@ -263,13 +284,27 @@ namespace Virus
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)
                 {
-                    if (tempBoard.board[x, y] == 1)
+                    if (playerNumber == 1)
                     {
-                        points--;
+                        if (tempBoard.board[x, y] == 1)
+                        {
+                            points--;
+                        }
+                        else if (tempBoard.board[x, y] == 2)
+                        {
+                            points++;
+                        }
                     }
-                    else if (tempBoard.board[x, y] == 2)
+                    else
                     {
-                        points++;
+                        if (tempBoard.board[x, y] == 1)
+                        {
+                            points++;
+                        }
+                        else if (tempBoard.board[x, y] == 2)
+                        {
+                            points--;
+                        }
                     }
                 }
             }

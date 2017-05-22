@@ -26,47 +26,87 @@ namespace Virus
         public void StartGame()
         {
             //VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
-            //VirusPlayer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), true, 3);
-            VirusPlayer player1 = new QLearningComputer(board, 0.4, 0.1, 1);
-            VirusPlayer player2 = new SemiSmartComputer(board, 2);
+            VirusPlayer player2 = new MiniMaxComputer(board, 2, SQL.GetClient(), true, 2);
+            //VirusPlayer player1 = new QLearningComputer(board, 0.1, 0.1, 1);
+            VirusPlayer player1 = new QLearningComputer(board, 0.2, 0.1, 1);
             bool visual = false;
             int[] result = new int[2];
+            int[] result2 = new int[2];
 
-            for (int i = 0; i < 10000; i++)
+            int player = 0;
+            int enemy = 0;
+
+
+            for (int j = 0; j < 100; j++)
             {
-                for (int j = 0; j < 3; j++)
+                result = new int[2];
+                while (!board.IsDone())
                 {
-                    while (!board.IsDone())
+                    player1.play();
+                    if (visual)
                     {
-                        player1.play();
-                        if (visual)
-                        {
-                            board.Display();
-                        }
-                        player2.play();
-                        if (visual)
-                        {
-                            board.Display();
-                        }
+                        board.Display();
                     }
-                    player1.AfterGame();
-                    player2.AfterGame();
-                    int[] result2 = board.GetScore();
-                    for (int b = 0; b < result2.Count(); b++)
+                    player2.play();
+                    if (visual)
                     {
-                        result[b] += result2[b];
+                        board.Display();
                     }
-                    
-                    board.reset();
+                }
+                player1.AfterGame();
+                player2.AfterGame();
+                
+                result2 = board.GetScore();
+                board.reset();
+
+                for (int b = 0; b < result2.Count(); b++)
+                {
+                    result[b] += result2[b];
                 }
                 Console.WriteLine("Game size " + gameSize + " Player 1 points: " + result[0]);
                 Console.WriteLine("Game size " + gameSize + " Player 2 points: " + result[1]);
-                result = new int[2];
+            }
+            
+            for (int j = 0; j < 20; j++)
+            {
+                while (!board.IsDone())
+                {
+                    player1.play();
+                    if (visual)
+                    {
+                        board.Display();
+                    }
+                    player2.play();
+                    if (visual)
+                    {
+                        board.Display();
+                    }
+                }
+                player1.AfterGame();
+                player2.AfterGame();
+                result2 = board.GetScore();
+                for (int b = 0; b < result2.Count(); b++)
+                {
+                    result[b] += result2[b];
+                }
+
+                board.reset();
+                if (result2[0] > result2[1])
+                {
+                    player++;
+                }
+                else if (result2[0] < result2[1])
+                {
+                    enemy++;
+                }
             }
             
 
-            Log.WriteLineToLog("Game size " + gameSize + " Player 1 points: " + result[0]);
-            Log.WriteLineToLog("Game size " + gameSize + " Player 2 points: " + result[1]);
+
+            Console.WriteLine("Player 1 " + player);
+            Console.WriteLine("Player 2 " + enemy);
+            Console.WriteLine("Game size " + gameSize + " Player 1 points: " + result[0]);
+            Console.WriteLine("Game size " + gameSize + " Player 2 points: " + result[1]);
 
         }
     }
