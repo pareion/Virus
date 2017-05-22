@@ -1,0 +1,2 @@
+Game size 7 Player 1 points: 190
+Game size 7 Player 2 points: 55
