@@ -83,7 +83,7 @@ namespace Virus
             {
                 roundWithoutChange++;
             }
-            if (GetBricks().Count == boardSize * boardSize || roundWithoutChange > 10)
+            if (GetBricks().Count == boardSize * boardSize || roundWithoutChange > 50)
                 return true;
             return false;
         }

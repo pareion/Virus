@@ -43,7 +43,7 @@ namespace Virus
             NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
 
             db.Create(neoroot);
-            
+
             while (queue.Count != 0)
             {
                 Node visiting = (Node)queue.Dequeue();
@@ -146,7 +146,7 @@ namespace Virus
             watch.Start();
             BFS(root);
             watch.Stop();
-            Console.WriteLine("Time elapsed while writing to the database: "+watch.Elapsed.TotalSeconds);
+            Console.WriteLine("Time elapsed while writing to the database: " + watch.Elapsed.TotalSeconds);
         }
 
         private int MIN(Node tmp, Board tempBoard)
@@ -170,7 +170,7 @@ namespace Virus
                 {
                     moves = tempBoard.FindAvailableMoves(1);
                 }
-                
+
                 Board previousBoard = tempBoard.Copy();
                 for (int i = 0; i < moves.Count; i++)
                 {
@@ -246,27 +246,13 @@ namespace Virus
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)
                 {
-                    if (playerNumber == 1)
+                    if (tempBoard.board[x, y] == 2)
                     {
-                        if (tempBoard.board[x, y] == 2)
-                        {
-                            Cpoints++;
-                        }
-                        if (tempBoard.board[x, y] == 1)
-                        {
-                            Hpoints++;
-                        }
+                        Cpoints++;
                     }
-                    else
+                    if (tempBoard.board[x, y] == 1)
                     {
-                        if (tempBoard.board[x, y] == 2)
-                        {
-                            Hpoints++;
-                        }
-                        if (tempBoard.board[x, y] == 1)
-                        {
-                            Cpoints++;
-                        }
+                        Hpoints++;
                     }
                 }
             }
@@ -330,13 +316,27 @@ namespace Virus
             {
                 for (int y = 0; y < tempBoard.boardSize; y++)
                 {
-                    if (tempBoard.board[x, y] == 1)
+                    if (playerNumber == 1)
                     {
-                        humanPoints++;
+                        if (tempBoard.board[x, y] == 1)
+                        {
+                            humanPoints++;
+                        }
+                        else if (tempBoard.board[x, y] == 2)
+                        {
+                            computerPoints++;
+                        }
                     }
-                    else if (tempBoard.board[x, y] == 2)
+                    else
                     {
-                        computerPoints++;
+                        if (tempBoard.board[x, y] == 2)
+                        {
+                            humanPoints++;
+                        }
+                        else if (tempBoard.board[x, y] == 1)
+                        {
+                            computerPoints++;
+                        }
                     }
                 }
             }
