@@ -47,6 +47,29 @@ namespace Virus
         double error;
         public void play()
         {
+            bool skip = false;
+            skip:
+            if (!skip)
+            {
+                for (int x = 0; x < board.boardSize; x++)
+                {
+                    for (int y = 0; y < board.boardSize; y++)
+                    {
+                        if (playerNumber == 1)
+                        {
+                            if (board.board[x, y] == 2)
+                            {
+                                skip = true;
+                                goto skip;
+                            }
+                        }
+                    }
+                }
+                Move move = board.FindAvailableMoves(playerNumber)[random.Next(board.FindAvailableMoves(playerNumber).Count)];
+                board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+                return;
+            }
+            
             //Define input for the neural network
             input = new double[1][];
             vec = new double[board.boardSize * board.boardSize * 3];

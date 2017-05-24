@@ -359,7 +359,7 @@ namespace Virus
                 int bestScorer = 9999;
                 int minscore;
 
-                List<Move> moves = tempboard.FindAvailableMoves(1);
+                List<Move> moves = tempboard.FindAvailableMoves(playerNumber);
                 root = new Node();
                 if (moves != null)
                 {
@@ -392,7 +392,10 @@ namespace Virus
             {
 
             }
-            tempboard.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+          
+                int a = tempboard.MakeMove(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+            
+             
             return new Tuple<Board, Move>(tempboard, bestMove);
         }
 
