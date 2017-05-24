@@ -47,181 +47,186 @@ namespace Virus
         double error;
         public void play()
         {
-            bool skip = false;
-            skip:
-            if (!skip)
+            if (board.FindAvailableMoves(playerNumber).Count > 0)
             {
-                for (int x = 0; x < board.boardSize; x++)
+                bool skip = false;
+                skip:
+                if (!skip)
                 {
-                    for (int y = 0; y < board.boardSize; y++)
+                    for (int x = 0; x < board.boardSize; x++)
                     {
-                        if (playerNumber == 1)
+                        for (int y = 0; y < board.boardSize; y++)
                         {
-                            if (board.board[x, y] == 2)
+                            if (playerNumber == 1)
                             {
-                                skip = true;
-                                goto skip;
+                                if (board.board[x, y] == 2)
+                                {
+                                    skip = true;
+                                    goto skip;
+                                }
                             }
                         }
                     }
-                }
-                Move move = board.FindAvailableMoves(playerNumber)[random.Next(board.FindAvailableMoves(playerNumber).Count)];
-                board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
-                return;
-            }
-            
-            //Define input for the neural network
-            input = new double[1][];
-            vec = new double[board.boardSize * board.boardSize * 3];
-            count = 0;
-            for (x = 0; x < board.boardSize; x++)
-            {
-                for (y = 0; y < board.boardSize; y++)
-                {
-                    if (board.board[x, y] == 2)
-                    {
-                        vec[count] = 1;
-                    }
-                    else if (board.board[x, y] == 1)
-                    {
-                        vec[count + 1] = 1;
-                    }
-                    else
-                    {
-                        vec[count + 2] = 1;
-                    }
-                    count = count + 3;
-                }
-            }
-            input[0] = vec;
-            //end
-
-            
-
-            //Setting up the neural network
-            for (int i = 0; i < net.inputLayer.neurons.Count; i++)
-            {
-                net.inputLayer.neurons[i].SetOutput(input[0][i]);
-            }
-            net.Pulse();
-            //end
-
-            //Convert the output from the neural network to an actual move
-            neuralBoard = new int[board.boardSize, board.boardSize];
-            row = 0;
-            coloumn = 0;
-            count = 0;
-
-            for (i = 0; i < net.outputLayer.neurons.Count; i++)
-            {
-                if (net.outputLayer.neurons[i].GetOutput() > 0.9)
-                {
-                    neuralBoard[row, coloumn] = 2;
-                }
-                else if (net.outputLayer.neurons[i + 1].GetOutput() > 0.9)
-                {
-                    neuralBoard[row, coloumn] = 1;
-                }
-
-                else if (net.outputLayer.neurons[i + 2].GetOutput() > 0.9)
-                {
-                    neuralBoard[row, coloumn] = 0;
-                }
-                
-                coloumn++;
-                i = i + 2;
-                if (coloumn > board.boardSize - 1)
-                {
-                    row++;
-                    coloumn = 0;
-                }
-                count++;
-            }
-            
-            moves = board.FindAvailableMoves(playerNumber);
-
-            //Figure out if the move is actually a valid move if so take the move if not retrain the network
-            temp = board.Copy();
-
-            foreach (var item in moves)
-            {
-                temp.IsMoveEligable(item.fromX, item.fromY, item.toX, item.toY);
-                temp.MakeMove(item.fromX, item.fromY, item.toX, item.toY);
-                correct = true;
-                for (x = 0; x < board.boardSize; x++)
-                {
-                    for (y = 0; y < board.boardSize; y++)
-                    {
-                        if (neuralBoard[x, y] != temp.board[x, y])
-                        {
-                            correct = false;
-                        }
-                    }
-                }
-                if (correct)
-                {
-                    move = item;
-                    break;
-                }
-                temp = board.Copy();
-            }
-            try
-            {
-                board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
-                board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
-                move = null;
-            }
-            //end
-            catch (Exception)
-            {
-                //Define output for the neural network and train it with the help of minimax
-                newBoard = null;
-                try
-                {
-                    newBoard = trainer.PredictMiniMaxMove(board.Copy());
-                }
-                catch (Exception)
-                {
-
-                }
-                if (newBoard == null)
-                {
+                    Move move = board.FindAvailableMoves(playerNumber)[random.Next(board.FindAvailableMoves(playerNumber).Count)];
+                    board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
                     return;
                 }
-                output = new double[1][];
-                vecOutput = new double[board.boardSize * board.boardSize * 3];
+                //Define input for the neural network
+                input = new double[1][];
+                vec = new double[board.boardSize * board.boardSize * 3];
                 count = 0;
                 for (x = 0; x < board.boardSize; x++)
                 {
                     for (y = 0; y < board.boardSize; y++)
                     {
-                        if (newBoard.Item1.board[x, y] == 2)
+                        if (board.board[x, y] == 2)
                         {
-                            vecOutput[count] = 1;
+                            vec[count] = 1;
                         }
-                        else if (newBoard.Item1.board[x, y] == 1)
+                        else if (board.board[x, y] == 1)
                         {
-                            vecOutput[count + 1] = 1;
+                            vec[count + 1] = 1;
                         }
                         else
                         {
-                            vecOutput[count + 2] = 1;
+                            vec[count + 2] = 1;
                         }
                         count = count + 3;
                     }
                 }
-                output[0] = vecOutput;
+                input[0] = vec;
+                //end
 
-                net.CalculateErrors(net, output[0]);
-                double error = 0;
-                foreach (var item in net.outputLayer.neurons)
+
+
+                //Setting up the neural network
+                for (int i = 0; i < net.inputLayer.neurons.Count; i++)
                 {
-                    error += Math.Abs(item.error);
+                    net.inputLayer.neurons[i].SetOutput(input[0][i]);
                 }
-                Log.WriteErrorGameLog(board.boardSize, "Error: "+error.ToString());
-                
-                Retrain(input, output);
+                net.Pulse();
+                //end
+
+                //Convert the output from the neural network to an actual move
+                neuralBoard = new int[board.boardSize, board.boardSize];
+                row = 0;
+                coloumn = 0;
+                count = 0;
+
+                for (i = 0; i < net.outputLayer.neurons.Count; i++)
+                {
+                    if (net.outputLayer.neurons[i].GetOutput() > 0.9)
+                    {
+                        neuralBoard[row, coloumn] = 2;
+                    }
+                    else if (net.outputLayer.neurons[i + 1].GetOutput() > 0.9)
+                    {
+                        neuralBoard[row, coloumn] = 1;
+                    }
+
+                    else if (net.outputLayer.neurons[i + 2].GetOutput() > 0.9)
+                    {
+                        neuralBoard[row, coloumn] = 0;
+                    }
+
+                    coloumn++;
+                    i = i + 2;
+                    if (coloumn > board.boardSize - 1)
+                    {
+                        row++;
+                        coloumn = 0;
+                    }
+                    count++;
+                }
+
+                moves = board.FindAvailableMoves(playerNumber);
+
+                //Figure out if the move is actually a valid move if so take the move if not retrain the network
+                temp = board.Copy();
+
+                foreach (var item in moves)
+                {
+                    temp.IsMoveEligable(item.fromX, item.fromY, item.toX, item.toY);
+                    temp.MakeMove(item.fromX, item.fromY, item.toX, item.toY);
+                    correct = true;
+                    for (x = 0; x < board.boardSize; x++)
+                    {
+                        for (y = 0; y < board.boardSize; y++)
+                        {
+                            if (neuralBoard[x, y] != temp.board[x, y])
+                            {
+                                correct = false;
+                            }
+                        }
+                    }
+                    if (correct)
+                    {
+                        move = item;
+                        break;
+                    }
+                    temp = board.Copy();
+                }
+                try
+                {
+                    board.IsMoveEligable(move.fromX, move.fromY, move.toX, move.toY);
+                    board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+                    move = null;
+                }
+                //end
+                catch (Exception)
+                {
+                    //Define output for the neural network and train it with the help of minimax
+                    newBoard = null;
+                    try
+                    {
+                        newBoard = trainer.PredictMiniMaxMove(board.Copy());
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                    if (newBoard == null)
+                    {
+                        return;
+                    }
+                    output = new double[1][];
+                    vecOutput = new double[board.boardSize * board.boardSize * 3];
+                    count = 0;
+                    for (x = 0; x < board.boardSize; x++)
+                    {
+                        for (y = 0; y < board.boardSize; y++)
+                        {
+                            if (newBoard.Item1.board[x, y] == 2)
+                            {
+                                vecOutput[count] = 1;
+                            }
+                            else if (newBoard.Item1.board[x, y] == 1)
+                            {
+                                vecOutput[count + 1] = 1;
+                            }
+                            else
+                            {
+                                vecOutput[count + 2] = 1;
+                            }
+                            count = count + 3;
+                        }
+                    }
+                    output[0] = vecOutput;
+
+                    net.CalculateErrors(net, output[0]);
+                    double error = 0;
+                    foreach (var item in net.outputLayer.neurons)
+                    {
+                        error += Math.Abs(item.error);
+                    }
+                    Log.WriteErrorGameLog(board.boardSize, "Error: " + error.ToString());
+
+                    Retrain(input, output);
+                }
             }
+            
+            
+            
         }
 
         private void Retrain(double[][] input, double[][] output)
