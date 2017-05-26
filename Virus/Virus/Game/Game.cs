@@ -25,12 +25,9 @@ namespace Virus
         }
         public void StartGame()
         {
-            VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
-           // VirusPlayer player2 = new MiniMaxComputer(board, 2, SQL.GetClient(), false, 4);
-            //VirusPlayer player1 = new QLearningComputer(board, 0.1, 0.1, 1);
-            //VirusPlayer player1 = new QLearningComputer(board, 0.2, 0.1, 1);
-            VirusPlayer player2 = new SemiSmartComputer(board, 2);
-            //VirusPlayer player2 = new SemiSmartComputer(board, 2);
+            //VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
+            VirusPlayer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), false, 2);
+            VirusPlayer player2 = new MiniMaxComputer(board, 2, SQL.GetClient(), false, 3);
             bool visual = true;
             int[] result = new int[2];
             int[] result2 = new int[2];
