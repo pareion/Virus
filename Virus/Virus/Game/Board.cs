@@ -91,6 +91,7 @@ namespace Virus
         {
             try
             {
+                Console.Clear();
                 for (int a = 0; a < boardSize; a++)
                 {
                     for (int i = 0; i < boardSize; i++)

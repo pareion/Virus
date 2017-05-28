@@ -26,7 +26,7 @@ namespace Virus
         public void StartGame()
         {
             //VirusPlayer player1 = new NeuralNetworkComputer(board, 1, ActivationFunction.SigmoidDerivative, false, 2);
-            VirusPlayer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), false, 2);
+            VirusPlayer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), false, 3);
             VirusPlayer player2 = new MiniMaxComputer(board, 2, SQL.GetClient(), false, 3);
             bool visual = true;
             int[] result = new int[2];
@@ -47,11 +47,13 @@ namespace Virus
                     {
                         board.Display();
                     }
+                    Thread.Sleep(2000);
                     player2.play();
                     if (visual)
                     {
                         board.Display();
                     }
+                    Thread.Sleep(2000);
                 }
                 player1.AfterGame();
                 player2.AfterGame();
