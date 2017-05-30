@@ -392,10 +392,9 @@ namespace Virus
             {
 
             }
-          
-                int a = tempboard.MakeMove(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
-            
-             
+
+            tempboard.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+
             return new Tuple<Board, Move>(tempboard, bestMove);
         }
 

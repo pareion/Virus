@@ -11,21 +11,24 @@ namespace Virus
         public bool training;
         NeuralNet net;
         Board board;
+        bool log;
         int playerNumber;
         MiniMaxComputer trainer;
         Random random = new Random();
-        public NeuralNetworkComputer(Board board, int playerNumber, ActivationFunction activation, bool storage, int depth)
+        public NeuralNetworkComputer(Board board, int playerNumber, ActivationFunction activation, bool storage, int depth, bool log)
         {
+            counter = 0;
             this.board = board;
             this.playerNumber = playerNumber;
             trainer = new MiniMaxComputer(board, playerNumber, SQL.GetClient(), storage, depth);
             net = new NeuralNet(activation);
+            this.log = log;
 
             training = true;
 
             int inputN, hiddenN, outputN;
             inputN = board.boardSize * board.boardSize * 3;
-            hiddenN = board.boardSize * board.boardSize * 6;
+            hiddenN = board.boardSize * board.boardSize * 3 * 2/3;
             outputN = board.boardSize * board.boardSize * 3;
             net.Init(3, inputN, hiddenN, outputN);
         }
@@ -40,6 +43,7 @@ namespace Virus
         int row;
         int coloumn;
         int count;
+        int counter;
         List<Move> moves;
         int x, y, i;
         Tuple<Board, Move> newBoard;
@@ -60,6 +64,14 @@ namespace Virus
                             if (playerNumber == 1)
                             {
                                 if (board.board[x, y] == 2)
+                                {
+                                    skip = true;
+                                    goto skip;
+                                }
+                            }
+                            else
+                            {
+                                if (board.board[x, y] == 1)
                                 {
                                     skip = true;
                                     goto skip;
@@ -214,19 +226,29 @@ namespace Virus
                     output[0] = vecOutput;
 
                     net.CalculateErrors(net, output[0]);
-                    double error = 0;
+                    
+                    /*if (log)
+                    {
+                        double error = 0;
+                        foreach (var item in net.outputLayer.neurons)
+                        {
+                            error += Math.Abs(item.error);
+                        }
+                        Log.WriteErrorGameLog(board.boardSize, "Error: " + error.ToString());
+                    }*/
                     foreach (var item in net.outputLayer.neurons)
                     {
                         error += Math.Abs(item.error);
                     }
-                    Log.WriteErrorGameLog(board.boardSize, "Error: " + error.ToString());
-
+                    Console.WriteLine("Error: " + error.ToString() + " " + counter);
+                    error = 0;
+                    counter++;
                     Retrain(input, output);
                 }
             }
-            
-            
-            
+
+
+
         }
 
         private void Retrain(double[][] input, double[][] output)
@@ -239,6 +261,7 @@ namespace Virus
 
         public void AfterGame()
         {
+            counter = 0;
         }
     }
 }

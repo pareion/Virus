@@ -624,6 +624,12 @@ namespace Virus
                     board.board[x, y] = this.board[x, y];
                 }
             }
+            board.bricks = this.bricks;
+            board.lastTime = this.lastTime;
+            board.playerTurn = this.playerTurn;
+            board.jumping = this.jumping;
+            board.roundWithoutChange = this.roundWithoutChange;
+        
             return board;
         }
         public Board GetNewBoard(Board board, Move move)

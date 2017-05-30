@@ -8,14 +8,14 @@ namespace NeuralNetwork
 {
     class Utility
     {
-        public static double SigmoidDerivative(double value)
+        public static double Sigmoid(double value)
         {
             return 1.0 / (1.0 + Math.Exp(-value));
         }
-        public static double SoftSigmoid(double value)
+        public static double SigmoidDerivative(double value)
         {
-            return value / (1 + Math.Abs(value));
+            return value * (1.0 - value);
         }
     }
-    public enum ActivationFunction { SigmoidDerivative, SoftSigmoid }
+    public enum ActivationFunction { Sigmoid }
 }

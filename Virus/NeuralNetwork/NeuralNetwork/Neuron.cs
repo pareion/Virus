@@ -53,10 +53,8 @@ namespace NeuralNetwork
         {
             switch (activation)
             {
-                case ActivationFunction.SigmoidDerivative:
-                    return Utility.SigmoidDerivative(value);
-                case ActivationFunction.SoftSigmoid:
-                    return Utility.SoftSigmoid(value);
+                case ActivationFunction.Sigmoid:
+                    return Utility.Sigmoid(value);
             }
             return 0;
         }
