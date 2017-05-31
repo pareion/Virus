@@ -92,10 +92,10 @@ namespace NeuralNetwork
         {
             PreparePerceptionLayerForPulse(neuralNet, input);
             neuralNet.Pulse();
-            BackPropagation(neuralNet, expected, learningrate);
-            /*
+            //BackPropagation(neuralNet, expected, learningrate);
+            
             CalculateErrors(neuralNet, expected);
-            AdjuestNet(neuralNet, learningrate);*/
+            AdjuestNet(neuralNet, learningrate);
         }
 
         private void PreparePerceptionLayerForPulse(NeuralNet neuralNet, double[] input)
@@ -165,32 +165,6 @@ namespace NeuralNetwork
                 neuralNet.hiddenLayer.neurons[i].error = error;
             }
         }
-        public void BackPropagation(NeuralNet net, double[] expectedOutput, double learningRate)
-        {
-            for (int i = 0; i < net.outputLayer.neurons.Count; i++)
-            {
-                if (expectedOutput[i] == 1)
-                {
-                    Neuron temp = net.outputLayer.neurons[i];
-                    temp.error = (expectedOutput[i] - temp.Output) * Utility.SigmoidDerivative(temp.Output);
-                }
-                else
-                {
-                    Neuron temp = net.outputLayer.neurons[i];
-                    temp.error = 0;
-                }
-            }
-
-            for (int i = 0; i < net.hiddenLayer.neurons.Count; i++)
-            {
-                Neuron temp = net.hiddenLayer.neurons[i];
-
-                foreach (var item in net.outputLayer.neurons)
-                {
-                    temp.error += item.error * (item.Input[i].Weight * Utility.SigmoidDerivative(temp.Output));
-                }
-            }
-            AdjuestNet(net, learningRate);
-        }
+     
     }
 }
