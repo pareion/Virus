@@ -30,7 +30,7 @@ namespace Virus
             inputN = board.boardSize * board.boardSize * 3;
             hiddenN = board.boardSize * board.boardSize * 3 * 2/3;
             outputN = board.boardSize * board.boardSize * 3;
-            net.Init(3, inputN, hiddenN, outputN);
+            net.Init(inputN, hiddenN, outputN);
         }
 
         Move move;
@@ -254,7 +254,7 @@ namespace Virus
         private void Retrain(double[][] input, double[][] output)
         {
             //Train the network and try to make a valid move
-            net.Train(input, output, 0.1, 1);
+            net.Train(input, output, 0.5, 1);
             play();
             //end
         }

@@ -14,7 +14,7 @@ namespace Virus.Persistance
 
         private Neo4j()
         {
-            db = new GraphClient(new Uri("http://localhost:7474/db/data"), "anders", "anders2");
+            db = new GraphClient(new Uri("http://127.0.0.1:7474/db/data"), "neo4j", "anders12");
             db.Connect();
         }
         public static Neo4j GetClient()

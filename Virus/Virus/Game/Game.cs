@@ -25,14 +25,14 @@ namespace Virus
         }
         public void StartGame()
         {
-            VirusPlayer player2 = new NeuralNetworkComputer(board, 2, ActivationFunction.Sigmoid, false, 2, false);
-            //VirusPlayer player2 = new MiniMaxComputer(board, 2, SQL.GetClient(), false, 2);
+            //VirusPlayer player2 = new NeuralNetworkComputer(board, 2, ActivationFunction.Sigmoid, false, 2, false);
+            VirusPlayer player2 = new MiniMaxComputer(board, 2, Neo4j.GetClient(), true, 3);
             VirusPlayer player1 = new SemiSmartComputer(board, 1);
             bool visual = false;
             int[] result = new int[2];
             int[] result2 = new int[2];
 
-            for (int j = 0; j < 500; j++)
+            for (int j = 0; j < 1; j++)
             {
                 Console.WriteLine("Starting a new game");
                 while (!board.IsDone())

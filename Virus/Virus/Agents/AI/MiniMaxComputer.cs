@@ -47,10 +47,7 @@ namespace Virus
             while (queue.Count != 0)
             {
                 Node visiting = (Node)queue.Dequeue();
-                int u = 0;
-                NeoNode node3 = new NeoNode { value = visiting.value, id = visiting.id };
-                u = visiting.id;
-
+        
                 for (int i = 0; i < visiting.children.Count; i++)
                 {
                     Node child = visiting.children[i];
@@ -60,26 +57,9 @@ namespace Virus
                     cc++;
                     var node4 = new NeoNode { value = ddd, id = cc };
                     child.id = cc;
-                    try
-                    {
-                        if (u != visiting.id)
-                        {
-                            db.Create(node3);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
 
-                    try
-                    {
-                        db.CreateChild(u, node4);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.Message);
-                    }
+                    db.CreateChild(visiting.id, node4);
+
 
                     queue.Enqueue(child);
                 }
