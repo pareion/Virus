@@ -27,16 +27,17 @@ namespace NeuralNetwork
             }
         }
 
-        public void Init(int inputNeurons, int hiddenNeurons, int outputNeurons)
+        public void Init(int seed, int inputNeurons, int hiddenNeurons, int outputNeurons)
         {
             inputLayer = new NeuralLayer();
             hiddenLayer = new NeuralLayer();
             outputLayer = new NeuralLayer();
             fitness = 100;
-            Random rand = new Random();
-            Random rand2 = new Random();
-            Random rand3 = new Random();
-            Random rand4 = new Random();
+            this.seed = seed;
+            Random rand = new Random(this.seed);
+            Random rand2 = new Random(this.seed);
+            Random rand3 = new Random(this.seed);
+            Random rand4 = new Random(this.seed);
 
             double bias = 0.5;
             int i, j;
@@ -91,11 +92,10 @@ namespace NeuralNetwork
         {
             PreparePerceptionLayerForPulse(neuralNet, input);
             neuralNet.Pulse();
-            BackPropagation(neuralNet, expected, learningrate);
+            //BackPropagation(neuralNet, expected, learningrate);
             
-            /*
             CalculateErrors(neuralNet, expected);
-            AdjuestNet(neuralNet, learningrate);*/
+            AdjuestNet(neuralNet, learningrate);
         }
 
         private void PreparePerceptionLayerForPulse(NeuralNet neuralNet, double[] input)
@@ -160,37 +160,11 @@ namespace NeuralNetwork
                 {
                     Neuron outputNode = neuralNet.outputLayer.neurons[a];
 
-                    error += outputNode.error * (outputNode.Input[i].Weight * Utility.SigmoidDerivative(temp.Output));
+                    error += outputNode.error * outputNode.Input[i].Weight * Utility.SigmoidDerivative(temp.Output);
                 }
                 neuralNet.hiddenLayer.neurons[i].error = error;
             }
         }
-        public void BackPropagation(NeuralNet net, double[] expectedOutput, double learningRate)
-        {
-            for (int i = 0; i < net.outputLayer.neurons.Count; i++)
-            {
-                if (expectedOutput[i] == 1)
-                {
-                    Neuron temp = net.outputLayer.neurons[i];
-                    temp.error = (expectedOutput[i] - temp.Output) * Utility.SigmoidDerivative(temp.Output);
-                }
-                else
-                {
-                    Neuron temp = net.outputLayer.neurons[i];
-                    temp.error = 0;
-                }
-            }
-
-            for (int i = 0; i < net.hiddenLayer.neurons.Count; i++)
-            {
-                Neuron temp = net.hiddenLayer.neurons[i];
-
-                foreach (var item in net.outputLayer.neurons)
-                {
-                    temp.error += item.error * (item.Input[i].Weight * Utility.SigmoidDerivative(temp.Output));
-                }
-            }
-            AdjuestNet(net, learningRate);
-        }
+     
     }
 }
