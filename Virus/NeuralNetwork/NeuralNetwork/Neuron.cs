@@ -17,7 +17,7 @@ namespace NeuralNetwork
             this.activation = activation;
         }
 
-        internal void Pulse(NeuralLayer neuralLayer)
+        internal void Pulse()
         {
             Output = 0;
 
@@ -32,7 +32,7 @@ namespace NeuralNetwork
 
         }
 
-        internal void InitiateLearning(NeuralLayer neuralLayer)
+        internal void InitiateLearning()
         {
             foreach (var item in Input)
             {

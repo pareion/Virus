@@ -11,16 +11,16 @@ namespace NeuralNetwork
     {
         public List<Neuron> neurons = new List<Neuron>();
 
-        public void Pulse(NeuralNet net)
+        public void Pulse()
         {
             foreach (Neuron n in neurons)
-                n.Pulse(this);
+                n.Pulse();
         }
         internal void InitiateLearning()
         {
             foreach (var item in neurons)
             {
-                item.InitiateLearning(this);
+                item.InitiateLearning();
             }
         }
     }

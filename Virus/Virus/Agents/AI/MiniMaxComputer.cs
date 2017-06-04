@@ -131,7 +131,6 @@ namespace Virus
 
         private int MIN(Node tmp, Board tempBoard)
         {
-
             if (GameEnded(tempBoard))
             {
                 return EvalEnding(tempBoard);

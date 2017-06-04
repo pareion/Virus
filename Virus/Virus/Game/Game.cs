@@ -25,8 +25,8 @@ namespace Virus
         }
         public void StartGame()
         {
-            //VirusPlayer player2 = new NeuralNetworkComputer(board, 2, ActivationFunction.Sigmoid, false, 2, false);
-            VirusPlayer player2 = new MiniMaxComputer(board, 2, Neo4j.GetClient(), true, 3);
+            VirusPlayer player2 = new NeuralNetworkComputer(board, 2, ActivationFunction.Sigmoid, false, 2, false);
+            //VirusPlayer player2 = new MiniMaxComputer(board, 2, Neo4j.GetClient(), true, 3);
             VirusPlayer player1 = new SemiSmartComputer(board, 1);
             bool visual = false;
             int[] result = new int[2];

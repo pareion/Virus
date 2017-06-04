@@ -22,8 +22,8 @@ namespace NeuralNetwork
         {
             lock (this)
             {
-                hiddenLayer.Pulse(this);
-                outputLayer.Pulse(this);
+                hiddenLayer.Pulse();
+                outputLayer.Pulse();
             }
         }
 
@@ -91,8 +91,8 @@ namespace NeuralNetwork
         {
             PreparePerceptionLayerForPulse(neuralNet, input);
             neuralNet.Pulse();
-            BackPropagation(neuralNet, expected, learningrate);
-            /*
+            //BackPropagation(neuralNet, expected, learningrate);
+            
             CalculateErrors(neuralNet, expected);
             AdjuestNet(neuralNet, learningrate);
         }
@@ -159,7 +159,7 @@ namespace NeuralNetwork
                 {
                     Neuron outputNode = neuralNet.outputLayer.neurons[a];
 
-                    error += outputNode.error * (outputNode.Input[i].Weight * Utility.SigmoidDerivative(temp.Output));
+                    error += outputNode.error * outputNode.Input[i].Weight * Utility.SigmoidDerivative(temp.Output);
                 }
                 neuralNet.hiddenLayer.neurons[i].error = error;
             }
