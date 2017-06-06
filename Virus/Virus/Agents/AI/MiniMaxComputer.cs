@@ -330,51 +330,57 @@ namespace Virus
 
             return 0;
         }
+        Tuple<Board,Move> previous;
         public Tuple<Board, Move> PredictMiniMaxMove(Board tempboard)
         {
             Move bestMove = null;
-            try
+            if (previous == null || previous.Item1.playerTurn != tempboard.playerTurn)
             {
-                int bestScorer = 9999;
-                int minscore;
-
-                List<Move> moves = tempboard.FindAvailableMoves(playerNumber);
-                root = new Node();
-                if (moves != null)
+                try
                 {
-                    Board tempBoard;
-                    for (int b = 0; b < moves.Count; b++)
+                    int bestScorer = 9999;
+                    int minscore;
+
+                    List<Move> moves = tempboard.FindAvailableMoves(playerNumber);
+                    root = new Node();
+                    if (moves != null)
                     {
-                        tempBoard = tempboard.Copy();
-                        Node tmp = new Node();
-                        counter++;
-                        tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                        tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                        minscore = MIN(tmp, tempBoard);
-                        tmp.value = minscore;
-                        root.children.Add(tmp);
-                        if (minscore < bestScorer)
+                        Board tempBoard;
+                        for (int b = 0; b < moves.Count; b++)
                         {
-                            bestMove = moves[b];
-                            bestScorer = minscore;
+                            tempBoard = tempboard.Copy();
+                            Node tmp = new Node();
+                            counter++;
+                            tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                            tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
+                            minscore = MIN(tmp, tempBoard);
+                            tmp.value = minscore;
+                            root.children.Add(tmp);
+                            if (minscore < bestScorer)
+                            {
+                                bestMove = moves[b];
+                                bestScorer = minscore;
+                            }
+                            counter--;
                         }
-                        counter--;
+                    }
+
+                    if (bestMove == null)
+                    {
+                        bestMove = moves[0];
                     }
                 }
-
-                if (bestMove == null)
+                catch (Exception)
                 {
-                    bestMove = moves[0];
+
                 }
+
+                tempboard.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
+
+                previous = new Tuple<Board, Move>(tempboard, bestMove);
             }
-            catch (Exception)
-            {
 
-            }
-
-            tempboard.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
-
-            return new Tuple<Board, Move>(tempboard, bestMove);
+            return previous;
         }
 
         public void AfterGame()
