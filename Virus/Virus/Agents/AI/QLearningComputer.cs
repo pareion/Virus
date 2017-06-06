@@ -10,100 +10,174 @@ namespace Virus
     {
         private double learningRate;
         private double discountFactor;
+        private double explorationFactor;
         private int playerNumber;
         private Board board;
-        private double[,] Qreward;
-        private double[,] Rreward;
-        private List<Move> movesMade;
+        private List<State> states;
+        private List<BeenThrough> statesBeenThrough;
+        List<QMove> actionsAvailable;
         private Random random;
-        /// <summary>
-        /// Takes in the game as a board and then the learning rate which should be a number between 0 and 1
-        /// then the discount rate which also should be a number between 0 and 1 but it determines the importance
-        /// of future rewards.
-        /// </summary>
-        /// <param name="board"></param>
-        /// <param name="learningRate"></param>
-        /// <param name="playerNumber"></param>
-        public QLearningComputer(Board board, double learningRate, double discountFactor, int playerNumber)
+
+        public QLearningComputer(Board board, double learningRate, double discountFactor, double explorationFactor, int playerNumber)
         {
             this.board = board;
             this.learningRate = learningRate;
             this.discountFactor = discountFactor;
+            this.explorationFactor = explorationFactor;
             this.playerNumber = playerNumber;
-            Qreward = new double[board.boardSize, board.boardSize];
-            Rreward = new double[board.boardSize, board.boardSize];
-            movesMade = new List<Move>();
             random = new Random();
+            actionsAvailable = new List<QMove>();
+            states = new List<State>();
+            statesBeenThrough = new List<BeenThrough>();
         }
 
         public void AfterGame()
         {
-            int[] result = board.GetScore();
-            foreach (Move move in movesMade)
+            if (board.GetScore()[playerNumber - 1] > board.boardSize * board.boardSize / 2)
             {
-                if (result[playerNumber - 1] > result[0] || result[playerNumber - 1] > result[1])
+                foreach (BeenThrough item in statesBeenThrough)
                 {
-                    Rreward[move.toX, move.toY] = Rreward[move.toX, move.toY] + 1;
+                    State state = states.Find(x => x.BoardHashValue == item.state.BoardHashValue);
+                    if (state == null)
+                        states.Add(item.state);
+                    else
+                        foreach (QMove action in state.Actions)
+                        {
+                            if (action.move.Equals(item.move))
+                            {
+                                action.points += 100f;
+                                break;
+                            }
+                        }
                 }
-                else
-                {
-                    Rreward[move.toX, move.toY] = Rreward[move.toX, move.toY] - 1;
-                }
-                Qreward[move.toX, move.toY]++;
             }
-            movesMade.Clear();
+            else
+            {
+                foreach (BeenThrough item in statesBeenThrough)
+                {
+                    State state = states.Find(x => x.BoardHashValue == item.state.BoardHashValue);
+                    if (state == null)
+                        states.Add(item.state);
+                    else
+                        foreach (QMove action in state.Actions)
+                        {
+                            if (action.move.Equals(item.move))
+                            {
+                                action.points += -0.1f;
+                                break;
+                            }
+                        }
+                }
+            }
+            statesBeenThrough.Clear();
         }
 
         public void play()
         {
-            Move moveToTake = null;
-
-            List<Move> movesAvailable = board.FindAvailableMoves(playerNumber);
-
-            double currentBestMove = int.MinValue;
-
-            foreach (Move move in movesAvailable)
+            if (board.FindAvailableMoves(playerNumber).Count == 0)
             {
-                double tmp = Max(board.GetNewBoard(board, move));
-                if (currentBestMove < (Reward(move) + learningRate * tmp))
-                {
-                    currentBestMove = Reward(move) + learningRate * tmp;
-                    moveToTake = move;
-                }
+                return;
             }
-            if (movesAvailable.Count > 0)
+            if (WonGame(board))
             {
-
-                if (moveToTake == null)
+                List<Move> moves = board.FindAvailableMoves(playerNumber);
+                Move move = moves[random.Next(0, moves.Count)];
+                board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+                return;
+            }
+            //Hvis jeg har støt på boardet før
+            if (ContainsState(board))
+            {
+                int hash = GetRealHashCode(board);
+                
+                actionsAvailable = states.Find(x => x.BoardHashValue == hash).Actions.OrderBy(x => x.points).ToList();
+                actionsAvailable.Reverse();
+                
+                //Explore a move (Maybe)
+                if (random.Next(0,101) < explorationFactor)
                 {
-                    Move move = movesAvailable[random.Next(movesAvailable.Count - 1)];
-                    board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
-                    movesMade.Add(move);
+                    QMove move = actionsAvailable[random.Next(0, actionsAvailable.Count)];
+                    board.MoveBrick(move.move.fromX, move.move.fromY, move.move.toX, move.move.toY);
                 }
+                //Don't explore
                 else
                 {
-                    board.MoveBrick(moveToTake.fromX, moveToTake.fromY, moveToTake.toX, moveToTake.toY);
-                    movesMade.Add(moveToTake);
+                    QMove move = actionsAvailable[0];
+                    board.MoveBrick(move.move.fromX, move.move.fromY, move.move.toX, move.move.toY);
                 }
             }
-        }
-
-        private double Reward(Move move)
-        {
-            return Rreward[move.toX, move.toY];
-        }
-
-        public double Max(Board board)
-        {
-            double best = 0;
-            foreach (Move move in board.FindAvailableMoves(playerNumber))
+            else
             {
-                if (Qreward[move.toX, move.toY] > best)
+                //Hvis jeg ikke har set boardet før
+                State state = new State();
+
+                List<Move> moves = board.FindAvailableMoves(playerNumber);
+
+                foreach (var item in moves)
                 {
-                    best = discountFactor * Qreward[move.toX, move.toY];
+                    state.Actions.Add(new QMove() { move = item, points = 100f });
+                }
+                state.BoardHashValue = GetRealHashCode(board);
+
+                Move move = moves[random.Next(0, moves.Count)];
+
+                statesBeenThrough.Add(new BeenThrough() { move = move, state = state });
+                board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
+            }
+        }
+
+        private bool WonGame(Board board)
+        {
+            for (int x = 0; x < board.boardSize; x++)
+            {
+                for (int y = 0; y < board.boardSize; y++)
+                {
+                    if (board.board[x, y] != playerNumber && board.board[x, y] != 0)
+                    {
+                        return false;
+                    }
                 }
             }
-            return best;
+            return true;
+        }
+
+        private bool ContainsState(Board board)
+        {
+            foreach (var item in states)
+            {
+                if (item.BoardHashValue == GetRealHashCode(board))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        public int GetRealHashCode(Board board)
+        {
+            string s = "";
+            for (int x = 0; x < board.boardSize; x++)
+            {
+                for (int y = 0; y < board.boardSize; y++)
+                {
+                    s += board.board[x, y];
+                }
+            }
+            return s.GetHashCode();
+        }
+        private class BeenThrough
+        {
+            public State state = null;
+            public Move move = null;
+        }
+        private class State
+        {
+            public int BoardHashValue = 0;
+            public List<QMove> Actions = new List<QMove>();
+        }
+        private class QMove
+        {
+            public Move move = null;
+            public double points = 100f;
         }
     }
 }
