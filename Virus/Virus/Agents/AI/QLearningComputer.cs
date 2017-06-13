@@ -10,7 +10,7 @@ namespace Virus
     {
         private double learningRate;
         private double discountFactor;
-        private double explorationFactor;
+        public double explorationFactor;
         private int playerNumber;
         private Board board;
         private List<State> states;
@@ -30,25 +30,30 @@ namespace Virus
             states = new List<State>();
             statesBeenThrough = new List<BeenThrough>();
         }
-
+        bool contained = false;
         public void AfterGame()
         {
-            if (board.GetScore()[playerNumber - 1] > board.boardSize * board.boardSize / 2)
+            if (board.GetScore()[playerNumber - 1] > (board.boardSize * board.boardSize / 2))
             {
                 foreach (BeenThrough item in statesBeenThrough)
                 {
-                    State state = states.Find(x => x.BoardHashValue == item.state.BoardHashValue);
-                    if (state == null)
-                        states.Add(item.state);
-                    else
-                        foreach (QMove action in state.Actions)
+                    contained = false;
+                    foreach (var item2 in states)
+                    {
+                        if (item2.BoardHashValue == item.state.BoardHashValue)
                         {
-                            if (action.move.Equals(item.move))
+                            foreach (var item3 in item2.Actions)
                             {
-                                action.points += 100f;
-                                break;
+                                item3.points += 0.1f;
                             }
+                            contained = true;
+                            break;
                         }
+                    }
+                    if (contained)
+                    {
+                        states.Add(item.state);
+                    }
                 }
             }
             else
@@ -88,23 +93,34 @@ namespace Virus
             //Hvis jeg har støt på boardet før
             if (ContainsState(board))
             {
-                int hash = GetRealHashCode(board);
-                
+                string hash = GetRealHashCode(board);
+
                 actionsAvailable = states.Find(x => x.BoardHashValue == hash).Actions.OrderBy(x => x.points).ToList();
                 actionsAvailable.Reverse();
-                
-                //Explore a move (Maybe)
-                if (random.Next(0,101) < explorationFactor)
+
+                State state = new State();
+                Move move = null;
+
+                List<Move> moves = board.FindAvailableMoves(playerNumber);
+                foreach (var item in moves)
                 {
-                    QMove move = actionsAvailable[random.Next(0, actionsAvailable.Count)];
-                    board.MoveBrick(move.move.fromX, move.move.fromY, move.move.toX, move.move.toY);
+                    state.Actions.Add(new QMove() { move = item, points = 100f });
+                }
+                state.BoardHashValue = GetRealHashCode(board);
+
+                //Explore a move (Maybe)
+                if (random.Next(0, 101) < explorationFactor)
+                {
+                    move = actionsAvailable[random.Next(0, actionsAvailable.Count)].move;
+                    board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
                 }
                 //Don't explore
                 else
                 {
-                    QMove move = actionsAvailable[0];
-                    board.MoveBrick(move.move.fromX, move.move.fromY, move.move.toX, move.move.toY);
+                    move = actionsAvailable[0].move;
+                    board.MoveBrick(move.fromX, move.fromY, move.toX, move.toY);
                 }
+                statesBeenThrough.Add(new BeenThrough() { move = move, state = state });
             }
             else
             {
@@ -152,7 +168,7 @@ namespace Virus
             }
             return false;
         }
-        public int GetRealHashCode(Board board)
+        public string GetRealHashCode(Board board)
         {
             string s = "";
             for (int x = 0; x < board.boardSize; x++)
@@ -162,7 +178,7 @@ namespace Virus
                     s += board.board[x, y];
                 }
             }
-            return s.GetHashCode();
+            return s;
         }
         private class BeenThrough
         {
@@ -171,7 +187,7 @@ namespace Virus
         }
         private class State
         {
-            public int BoardHashValue = 0;
+            public string BoardHashValue = "";
             public List<QMove> Actions = new List<QMove>();
         }
         private class QMove
