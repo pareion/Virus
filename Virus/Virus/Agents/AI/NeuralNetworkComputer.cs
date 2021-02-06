@@ -15,12 +15,12 @@ namespace Virus
         int playerNumber;
         MiniMaxComputer trainer;
         Random random = new Random();
-        public NeuralNetworkComputer(Board board, int playerNumber, ActivationFunction activation, bool storage, int depth, bool log)
+        public NeuralNetworkComputer(Board board, int playerNumber, ActivationFunction activation, bool storage, int depth, bool log, bool pruning)
         {
             counter = 0;
             this.board = board;
             this.playerNumber = playerNumber;
-            trainer = new MiniMaxComputer(board, playerNumber, SQL.GetClient(), storage, depth);
+            trainer = new MiniMaxComputer(board, playerNumber, SQL.GetClient(), storage, depth, pruning);
             net = new NeuralNet(activation);
             this.log = log;
 

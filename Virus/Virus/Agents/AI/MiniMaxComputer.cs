@@ -16,8 +16,9 @@ namespace Virus
         List<Node> pointsVisistedBFS;
         public bool storage;
         IDB db;
+        private bool pruning;
 
-        public MiniMaxComputer(Board board, int playerNumber, IDB db, bool storage, int depth)
+        public MiniMaxComputer(Board board, int playerNumber, IDB db, bool storage, int depth, bool pruning)
         {
             counter = 0;
             maxcounter = depth;
@@ -25,6 +26,7 @@ namespace Virus
             this.playerNumber = playerNumber;
             this.storage = storage;
             this.db = db;
+            this.pruning = pruning;
         }
         public void play()
         {
@@ -67,6 +69,8 @@ namespace Virus
         }
         private void MiniMax(Board board)
         {
+            int alpha = int.MinValue;
+            int beta = int.MaxValue;
             try
             {
                 Move bestMove = null;
@@ -85,7 +89,7 @@ namespace Virus
                         counter++;
                         tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
                         int a = tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                        minscore = MIN(tmp, tempBoard);
+                        minscore = MIN(tmp, tempBoard, alpha, beta);
                         tmp.value = minscore;
                         root.children.Add(tmp);
                         if (minscore < bestScorer)
@@ -129,7 +133,7 @@ namespace Virus
             Console.WriteLine("Time elapsed while writing to the database: " + watch.Elapsed.TotalSeconds);
         }
 
-        private int MIN(Node tmp, Board tempBoard)
+        private int MIN(Node tmp, Board tempBoard, int alpha, int beta)
         {
             if (GameEnded(tempBoard))
             {
@@ -158,7 +162,7 @@ namespace Virus
                     tempBoard.IsMoveEligable(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
                     tempBoard.MakeMove(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
                     counter++;
-                    int score = MAX(temp, tempBoard);
+                    int score = MAX(temp, tempBoard, alpha, beta);
                     counter--;
 
                     temp.value = score;
@@ -170,11 +174,20 @@ namespace Virus
                     }
                     tempBoard = previousBoard.Copy();
 
+                    if (pruning)
+                    {
+                        beta = score;
+
+                        if (beta <= alpha)
+                        {
+                            break;
+                        }
+                    }
                 }
                 return bestScore;
             }
         }
-        private int MAX(Node tmp, Board tempBoard)
+        private int MAX(Node tmp, Board tempBoard, int alpha, int beta)
         {
             if (GameEnded(tempBoard))
             {
@@ -198,7 +211,7 @@ namespace Virus
                     tempBoard.IsMoveEligable(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
                     tempBoard.MakeMove(moves[i].fromX, moves[i].fromY, moves[i].toX, moves[i].toY);
                     counter++;
-                    int score = MIN(temp, tempBoard);
+                    int score = MIN(temp, tempBoard, alpha, beta);
                     counter--;
 
                     temp.value = score;
@@ -210,7 +223,15 @@ namespace Virus
                     }
                     tempBoard = previousBoard.Copy();
 
+                    if (pruning)
+                    {
+                        alpha = score;
 
+                        if (beta <= alpha)
+                        {
+                            break;
+                        }
+                    }
                 }
 
                 return bestScore;
@@ -333,6 +354,8 @@ namespace Virus
         Tuple<Board,Move> previous;
         public Tuple<Board, Move> PredictMiniMaxMove(Board tempboard)
         {
+            int alpha = int.MinValue;
+            int beta = int.MaxValue;
             Move bestMove = null;
             if (previous == null || previous.Item1.playerTurn != tempboard.playerTurn)
             {
@@ -353,7 +376,7 @@ namespace Virus
                             counter++;
                             tempBoard.IsMoveEligable(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
                             tempBoard.MakeMove(moves[b].fromX, moves[b].fromY, moves[b].toX, moves[b].toY);
-                            minscore = MIN(tmp, tempBoard);
+                            minscore = MIN(tmp, tempBoard, alpha, beta);
                             tmp.value = minscore;
                             root.children.Add(tmp);
                             if (minscore < bestScorer)

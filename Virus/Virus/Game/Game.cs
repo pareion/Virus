@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using NeuralNetwork;
 using Virus.Persistance;
+using System.Diagnostics;
 
 namespace Virus
 {
@@ -25,16 +26,18 @@ namespace Virus
         }
         public void StartGame()
         {
-            //VirusPlayer player2 = new NeuralNetworkComputer(board, 2, ActivationFunction.Sigmoid, false, 2, false);
-            //VirusPlayer player2 = new MiniMaxComputer(board, 2, Neo4j.GetClient(), true, 3);
-            VirusPlayer player1 = new QLearningComputer(board, 1, 1, 10, 1);
+            VirusPlayer player1 = new NeuralNetworkComputer(board, 2, ActivationFunction.Sigmoid, false, 3, false, true);
+            //VirusPlayer player1 = new MiniMaxComputer(board, 1, SQL.GetClient(), false, 4, true);
+            //VirusPlayer player1 = new QLearningComputer(board, 1, 1, 10, 1);
             VirusPlayer player2 = new SemiSmartComputer(board, 2);
             bool visual = true;
             int[] result = new int[2];
             int[] result2 = new int[2];
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 1; i++)
             {
-                for (int j = 0; j < 50; j++)
+                Stopwatch time = new Stopwatch();
+                time.Start();
+                for (int j = 0; j < 1; j++)
                 {
                     Console.WriteLine("Starting a new game");
                     while (!board.IsDone())
@@ -61,10 +64,11 @@ namespace Virus
                         result[b] += result2[b];
                     }
                 }
+                time.Stop();
+                Console.WriteLine("Time taken: "+time.Elapsed);
                 Console.WriteLine("Game size " + gameSize + " Player 1 points: " + result[0]);
                 Console.WriteLine("Game size " + gameSize + " Player 2 points: " + result[1]);
                 result = new int[2];
-                Thread.Sleep(5000);
             }
         }
     }
