@@ -7,17 +7,13 @@ namespace Virus
 {
     public class Game
     {
+        private const int TimeBeforeNextMove = 500;
         private readonly Board Board;
-        private int GameSize;
+        private readonly int GameSize;
         public Game(int initSize)
         {
             Board = new Board(initSize);
             GameSize = initSize;
-        }
-        private void PlayGame(int size)
-        {
-            Board.reset();
-            GameSize = size;
         }
         public void StartGame()
         {
@@ -42,13 +38,13 @@ namespace Virus
                         {
                             Board.Display();
                         }
-                        Thread.Sleep(1000);
+                        Thread.Sleep(TimeBeforeNextMove);
                         player2.play();
                         if (visual)
                         {
                             Board.Display();
                         }
-                        Thread.Sleep(1000);
+                        Thread.Sleep(TimeBeforeNextMove);
                     }
                     player1.AfterGame();
                     player2.AfterGame();
