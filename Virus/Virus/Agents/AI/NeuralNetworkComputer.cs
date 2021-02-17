@@ -1,8 +1,6 @@
-﻿using NeuralNetwork;
+﻿using Neural_Network;
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using Virus.Persistance;
 
 namespace Virus
 {
@@ -15,13 +13,13 @@ namespace Virus
         int playerNumber;
         MiniMaxComputer trainer;
         Random random = new Random();
-        public NeuralNetworkComputer(Board board, int playerNumber, ActivationFunction activation, bool storage, int depth, bool log, bool pruning)
+        public NeuralNetworkComputer(Board board, int playerNumber, int depth, bool log, bool pruning)
         {
             counter = 0;
             this.board = board;
             this.playerNumber = playerNumber;
-            trainer = new MiniMaxComputer(board, playerNumber, SQL.GetClient(), storage, depth, pruning);
-            net = new NeuralNet(activation);
+            trainer = new MiniMaxComputer(board, playerNumber, depth, pruning);
+            
             this.log = log;
 
             training = true;
@@ -30,7 +28,7 @@ namespace Virus
             inputN = board.boardSize * board.boardSize * 3;
             hiddenN = board.boardSize * board.boardSize * 3 * 2/3;
             outputN = board.boardSize * board.boardSize * 3;
-            net.Init(inputN, hiddenN, outputN);
+            net = new NeuralNet(inputN, new[] { hiddenN }, outputN);
         }
 
         Move move;
@@ -112,9 +110,9 @@ namespace Virus
 
 
                 //Setting up the neural network
-                for (int i = 0; i < net.inputLayer.neurons.Count; i++)
+                for (int i = 0; i < net.InputLayer.Neurons.Count; i++)
                 {
-                    net.inputLayer.neurons[i].SetOutput(input[0][i]);
+                    net.InputLayer.Neurons[i].Output = input[0][i];
                 }
                 net.Pulse();
                 //end
@@ -125,24 +123,24 @@ namespace Virus
                 coloumn = 0;
                 count = 0;
 
-                for (i = 0; i < net.outputLayer.neurons.Count; i++)
+                for (i = 0; i < net.OutputLayer.Neurons.Count; i++)
                 {
-                    if (net.outputLayer.neurons[i].GetOutput() > 0.9)
+                    if (net.OutputLayer.Neurons[i].Output > 0.9)
                     {
                         neuralBoard[row, coloumn] = 2;
                     }
-                    else if (net.outputLayer.neurons[i + 1].GetOutput() > 0.9)
+                    else if (net.OutputLayer.Neurons[i + 1].Output > 0.9)
                     {
                         neuralBoard[row, coloumn] = 1;
                     }
 
-                    else if (net.outputLayer.neurons[i + 2].GetOutput() > 0.9)
+                    else if (net.OutputLayer.Neurons[i + 2].Output > 0.9)
                     {
                         neuralBoard[row, coloumn] = 0;
                     }
 
                     coloumn++;
-                    i = i + 2;
+                    i += 2;
                     if (coloumn > board.boardSize - 1)
                     {
                         row++;
@@ -220,7 +218,7 @@ namespace Virus
                             {
                                 vecOutput[count + 2] = 1;
                             }
-                            count = count + 3;
+                            count += 3;
                         }
                     }
                     output[0] = vecOutput;
@@ -236,9 +234,9 @@ namespace Virus
                         }
                         Log.WriteErrorGameLog(board.boardSize, "Error: " + error.ToString());
                     }*/
-                    foreach (var item in net.outputLayer.neurons)
+                    foreach (var outputNeuron in net.OutputLayer.Neurons)
                     {
-                        error += Math.Abs(item.error);
+                        error += Math.Abs(outputNeuron.Error);
                     }
                     Console.WriteLine("Error: " + error.ToString() + " " + counter);
                     error = 0;

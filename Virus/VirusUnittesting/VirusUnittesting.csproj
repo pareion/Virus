@@ -14,7 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Virus2.0\Virus2.0.csproj" />
+    <ProjectReference Include="..\Neural Network\Neural Network\Neural Network.csproj" />
+    <ProjectReference Include="..\Virus\Virus.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
 </Project>

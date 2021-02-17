@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using UnitTesting;
 
 namespace Virus
 {
@@ -11,7 +10,7 @@ namespace Virus
     {
         static void Main(string[] args)
         {
-            Game game = new Game(4);
+            Game game = new Game(6);
             game.StartGame();
         }
     }

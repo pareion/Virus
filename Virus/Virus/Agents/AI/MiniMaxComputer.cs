@@ -1,9 +1,7 @@
-﻿using Neo4jClient;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-using Virus.Persistance;
 
 namespace Virus
 {
@@ -14,18 +12,14 @@ namespace Virus
         int playerNumber;
         Node root;
         List<Node> pointsVisistedBFS;
-        public bool storage;
-        IDB db;
         private bool pruning;
 
-        public MiniMaxComputer(Board board, int playerNumber, IDB db, bool storage, int depth, bool pruning)
+        public MiniMaxComputer(Board board, int playerNumber, int depth, bool pruning)
         {
             counter = 0;
             maxcounter = depth;
             this.board = board;
             this.playerNumber = playerNumber;
-            this.storage = storage;
-            this.db = db;
             this.pruning = pruning;
         }
         public void play()
@@ -34,17 +28,12 @@ namespace Virus
         }
         private void BFS(Node start)
         {
-
             Queue queue = new Queue();
             pointsVisistedBFS = new List<Node>();
             pointsVisistedBFS.Add(start);
             queue.Enqueue(start);
 
             int cc = -1;
-
-            NeoNode neoroot = new NeoNode() { id = -1, value = -1 };
-
-            db.Create(neoroot);
 
             while (queue.Count != 0)
             {
@@ -54,14 +43,8 @@ namespace Virus
                 {
                     Node child = visiting.children[i];
 
-                    int ddd = child.value;
-
                     cc++;
-                    var node4 = new NeoNode { value = ddd, id = cc };
                     child.id = cc;
-
-                    db.CreateChild(visiting.id, node4);
-
 
                     queue.Enqueue(child);
                 }
@@ -109,13 +92,6 @@ namespace Virus
                 {
                     board.MoveBrick(bestMove.fromX, bestMove.fromY, bestMove.toX, bestMove.toY);
                 }
-
-                //Stores the current root in the Neo4j Database locally
-                if (storage)
-                {
-                    WriteToDatabase();
-                }
-
             }
             catch (Exception)
             {
@@ -410,7 +386,7 @@ namespace Virus
         {
         }
 
-        private class Node : IRelationshipAllowingParticipantNode<Node>, IRelationshipAllowingSourceNode<Node>, IRelationshipAllowingTargetNode<Node>
+        private class Node
         {
             public List<Node> children = new List<Node>();
             public int value = 0;
